@@ -1,7 +1,11 @@
+import smallMockData from "./mock-data/small_data.json";
+
+import { Table } from "./components";
+
 function App() {
   return (
     <>
-      <h1>Hello Table!</h1>
+      <Table data={smallMockData.data} />
     </>
   )
 }
