@@ -20,7 +20,7 @@ export const TableRow = ({ data, columns }: TableRow) => {
         return (
           <td
             key={typeof column !== 'number' ? column.dataIndex : column}
-            className={styles[`cell-${typeof column !== 'number' ? column.dataIndex : column}`]}
+            className={styles[`cell-${typeof column !== 'number' ? column.dataIndex : 'tag'}`]}
           >
             {cellValue}
           </td>

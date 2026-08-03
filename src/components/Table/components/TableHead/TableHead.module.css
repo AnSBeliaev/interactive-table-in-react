@@ -3,4 +3,22 @@
     position: sticky;
     top: 0;
     z-index: 2;
+    color: var(--head-text);
+}
+
+.tag-head-td {
+    width: 40px;
+}
+
+.tag-head-td div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: green;
+    font-weight: 700;
 }

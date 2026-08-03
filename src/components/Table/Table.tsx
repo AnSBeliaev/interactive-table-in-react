@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { TableRow } from './components';
 import { TableHead } from './components';
 import { STATIC_COLUMNS as staticColumns } from './constants/columns';
@@ -17,22 +18,24 @@ const isTag = (value: string | number | Tag | null): value is Tag => {
 type NormalisedTableRowItem = TableRowItem & { tagsByOrder?: Tag[] };
 
 export const Table = ({ data }: TableProps) => {
-  const normalizedDocuments: NormalisedTableRowItem[] = data.documents.map((document) => {
-    const tagsByOrder: Tag[] = [];
-    const documentEntries: [string, string | number | Tag | null][] = Object.entries(document);
+  const normalizedDocuments: NormalisedTableRowItem[] = useMemo(() => {
+    return data.documents.map((document) => {
+      const tagsByOrder: Tag[] = [];
+      const documentEntries: [string, string | number | Tag | null][] = Object.entries(document);
 
-    documentEntries.forEach((item) => {
-      const value = item[1];
-      if (isTag(value)) {
-        tagsByOrder.push(value);
-      }
+      documentEntries.forEach((item) => {
+        const value = item[1];
+        if (isTag(value)) {
+          tagsByOrder.push(value);
+        }
+      });
+
+      return {
+        ...document,
+        tagsByOrder: [...tagsByOrder],
+      };
     });
-
-    return {
-      ...document,
-      tagsByOrder: [...tagsByOrder],
-    };
-  });
+  }, [data.documents]);
 
   const dynamicColumns = data.tagsForHeader.map((tag) => {
     return tag.order;
@@ -43,9 +46,17 @@ export const Table = ({ data }: TableProps) => {
       <table>
         <thead>
           <tr>
-            {allColumns.map((headItem) => {
+            {allColumns.map((headItem, headItemIndex) => {
               if (typeof headItem === 'number') {
-                return <TableHead key={headItem} item={String(headItem + 1)} />;
+                return (
+                  <TableHead
+                    key={headItem}
+                    item={String(headItem + 1)}
+                    tagsColor={data.tagsForHeader.filter((tag, tagColorIndex) => {
+                      if (headItemIndex - 2 === tagColorIndex) return tag.color;
+                    })}
+                  />
+                );
               }
               return <TableHead key={headItem.dataIndex} item={headItem.title} />;
             })}
