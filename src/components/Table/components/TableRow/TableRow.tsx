@@ -5,12 +5,10 @@ type TableRowProps = {
   columns: ColumnItem[];
 };
 
-export const TableRow = ({ data, columns }: TableRowProps) => {
-  return (
-    <tr>
-      {columns.map((column) => {
-        return <td key={column.dataIndex}>{column.dataIndex ? data[column.dataIndex] : ''}</td>;
-      })}
-    </tr>
-  );
-};
+export const TableRow = ({ data, columns }: TableRowProps) => (
+  <tr>
+    {columns.map((column) => (
+      <td key={column.dataIndex}>{column.dataIndex ? data[column.dataIndex] : ''}</td>
+    ))}
+  </tr>
+);
