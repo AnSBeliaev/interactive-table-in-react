@@ -1,0 +1,15 @@
+.cell-view {
+    width: 60px;
+    position: sticky;
+    left: 0;
+    background-color: var(--table-tag-bg);
+}
+
+.cell-name {
+    width: 240px;
+    max-width: 240px;
+    position: sticky;
+    left: 0;
+    text-overflow: ellipsis;
+    background-color: var(--table-tag-bg);
+}

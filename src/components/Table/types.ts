@@ -19,7 +19,6 @@ export type TableRowItem = {
   customName: string | null;
   projectDocumentId: number;
   allTags: number;
-  tagsByOrder?: { [order: number]: Tag | undefined };
 };
 
 export type ExcerptsCount = {
@@ -43,10 +42,10 @@ export type TagsForHeader = {
 export type TableData = {
   documents: TableRowItem[];
   excerptsCount: ExcerptsCount[];
-  tagsForHeader: { [order: number]: TagsForHeader }[];
+  tagsForHeader: TagsForHeader[];
 };
 
 export type ColumnItem = {
   title: string;
-  dataIndex?: 'name' | 'customName' | 'notes' | 'allTags';
+  dataIndex?: 'name' | 'customName' | 'notes' | 'allTags' | 'view';
 };
