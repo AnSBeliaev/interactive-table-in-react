@@ -1,6 +1,6 @@
 import type { ColumnItem } from '../types';
 
-export const COLUMNS: ColumnItem[] = [
+export const STATIC_COLUMNS: ColumnItem[] = [
   {
     title: 'view',
   },

@@ -1,7 +1,7 @@
-type TableHead = {
+type TableHeadProps = {
   item: string;
 };
 
-export const TableHead = ({ item }: TableHead) => {
-  return <td title={item}>{item}</td>;
+export const TableHead = (props: TableHeadProps) => {
+  return <td title={props.item}>{props.item}</td>;
 };

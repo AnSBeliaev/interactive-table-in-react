@@ -1,16 +1,15 @@
-import { COLUMNS } from '../../constants/columns';
-import type { TableRowItem } from '../../types';
+import type { ColumnItem, TableRowItem } from '../../types';
 
-type TableRow = {
+type TableRowProps = {
   data: TableRowItem;
+  columns: ColumnItem[];
 };
 
-export const TableRow = ({ data }: TableRow) => {
+export const TableRow = ({ data, columns }: TableRowProps) => {
   return (
     <tr>
-      {COLUMNS.map((column) => {
-        const cellValue = column.dataIndex ? data[column.dataIndex] : '';
-        return <td key={column.dataIndex}>{cellValue}</td>;
+      {columns.map((column) => {
+        return <td key={column.dataIndex}>{column.dataIndex ? data[column.dataIndex] : ''}</td>;
       })}
     </tr>
   );

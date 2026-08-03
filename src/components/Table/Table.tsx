@@ -1,25 +1,25 @@
 import { TableRow } from './components';
 import { TableHead } from './components';
-import { COLUMNS } from './constants/columns';
+import { STATIC_COLUMNS } from './constants/columns';
 import type { ColumnItem, TableData, TableRowItem } from './types';
 
-type TableArgs = {
+type TableProps = {
   data: TableData;
 };
 
-export const Table = ({ data }: TableArgs) => {
+export const Table = (props: TableProps) => {
   return (
     <table>
       <thead>
         <tr>
-          {COLUMNS.map((headItem: ColumnItem) => {
+          {STATIC_COLUMNS.map((headItem: ColumnItem) => {
             return <TableHead key={headItem.dataIndex} item={headItem.title} />;
           })}
         </tr>
       </thead>
       <tbody>
-        {data.documents?.map((tableRowItem: TableRowItem) => {
-          return <TableRow key={tableRowItem.id} data={tableRowItem} />;
+        {props.data.documents?.map((tableRowItem: TableRowItem) => {
+          return <TableRow key={tableRowItem.id} data={tableRowItem} columns={STATIC_COLUMNS} />;
         })}
       </tbody>
     </table>
