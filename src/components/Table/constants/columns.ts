@@ -1,11 +1,11 @@
-import type { ColumnItem } from "../types";
+import type { ColumnItem } from '../types';
 
 export const COLUMNS: ColumnItem[] = [
-    {
-        title: "view",
-    },
-    {
-        title: "Document",
-        dataIndex: "name",
-    }
-]
+  {
+    title: 'view',
+  },
+  {
+    title: 'Document',
+    dataIndex: 'name',
+  },
+];

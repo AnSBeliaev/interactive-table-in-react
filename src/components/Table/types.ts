@@ -1,52 +1,52 @@
 export type Tag = {
-    id: number;
-    text: string;
-    color: string;
-    order: number;
-    allExcerpt: string;
-}
+  id: number;
+  text: string;
+  color: string;
+  order: number;
+  allExcerpt: string;
+};
 
 export type TableRowItem = {
-    id: number;
-    name: string | null;
-    groupName: string | null;
-    groupNameStr: string | null;
-    notes: string;
-    number: string | null;
-    type: string;
-    showText: string;
-    status: string;
-    customName: string | null;
-    projectDocumentId: number;
-    allTags: number;
-    tagsByOrder?: { [order: number]: Tag | undefined }
-}
+  id: number;
+  name: string | null;
+  groupName: string | null;
+  groupNameStr: string | null;
+  notes: string;
+  number: string | null;
+  type: string;
+  showText: string;
+  status: string;
+  customName: string | null;
+  projectDocumentId: number;
+  allTags: number;
+  tagsByOrder?: { [order: number]: Tag | undefined };
+};
 
 export type ExcerptsCount = {
-    customName: string;
-    excerptsCount: number;
-    id: number;
-}
+  customName: string;
+  excerptsCount: number;
+  id: number;
+};
 
 type TagColor = {
-    color: string;
-}
+  color: string;
+};
 
 export type TagsForHeader = {
-    id: number;
-    order: number;
-    text: string;
-    color: string;
-    tagColor: TagColor;
-}
+  id: number;
+  order: number;
+  text: string;
+  color: string;
+  tagColor: TagColor;
+};
 
 export type TableData = {
-    documents: TableRowItem[];
-    excerptsCount: ExcerptsCount[];
-    tagsForHeader: { [order: number]: TagsForHeader }[];
-}
+  documents: TableRowItem[];
+  excerptsCount: ExcerptsCount[];
+  tagsForHeader: { [order: number]: TagsForHeader }[];
+};
 
 export type ColumnItem = {
-    title: string;
-    dataIndex?: "name" | "customName" | "notes" | "allTags";
-}
+  title: string;
+  dataIndex?: 'name' | 'customName' | 'notes' | 'allTags';
+};
