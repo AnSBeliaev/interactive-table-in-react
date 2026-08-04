@@ -9,7 +9,7 @@ export const TableRow = <T,>({ data, columns }: TableRowProps<T>) => (
   <tr>
     {columns.map((column) => {
       const value = column.dataIndex ? data[column.dataIndex] : '';
-      return <td key={String(column.dataIndex)}>{String(value ?? '')}</td>;
+      return <td key={column.id}>{String(value ?? '')}</td>;
     })}
   </tr>
 );

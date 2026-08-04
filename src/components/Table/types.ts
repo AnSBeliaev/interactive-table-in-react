@@ -49,4 +49,5 @@ export type TableData = {
 export type ColumnItem<T> = {
   title: string;
   dataIndex?: keyof T;
+  id: string;
 };

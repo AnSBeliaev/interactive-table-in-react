@@ -14,7 +14,7 @@ export const Table = (props: TableProps<TableRowItem>) => {
       <thead>
         <tr>
           {props.columns.map((headItem: ColumnItem<TableRowItem>) => {
-            return <TableHead key={headItem.dataIndex} item={headItem.title} />;
+            return <TableHead key={headItem.id} item={headItem.title} />;
           })}
         </tr>
       </thead>
