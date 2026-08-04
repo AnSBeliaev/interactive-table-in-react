@@ -10,7 +10,11 @@ type TableRow = {
 export const TableFooter = ({ allExcerptSums, allTagsSum, columns }: TableRow) => {
   return (
     <tr>
-      {columns.map((column) => {
+      <td colSpan={2} className={styles['all-documents-td']}>
+        All documents
+      </td>
+      {columns.map((column, index) => {
+        if (index == 0 || index === 1) return null;
         const cellValue =
           typeof column !== 'number' ? (column.dataIndex === 'allTags' ? allTagsSum : '') : allExcerptSums[column];
         return (
