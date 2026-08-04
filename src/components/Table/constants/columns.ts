@@ -1,6 +1,6 @@
-import type { ColumnItem } from '../types';
+import type { ColumnItem, TableRowItem } from '../types';
 
-export const STATIC_COLUMNS: ColumnItem[] = [
+export const STATIC_COLUMNS: ColumnItem<TableRowItem>[] = [
   {
     title: 'view',
   },

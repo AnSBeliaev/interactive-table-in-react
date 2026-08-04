@@ -46,7 +46,7 @@ export type TableData = {
   tagsForHeader: { [order: number]: TagsForHeader }[];
 };
 
-export type ColumnItem = {
+export type ColumnItem<T> = {
   title: string;
-  dataIndex?: 'name' | 'customName' | 'notes' | 'allTags';
+  dataIndex?: keyof T;
 };

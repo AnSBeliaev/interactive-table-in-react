@@ -1,14 +1,15 @@
-import type { ColumnItem, TableRowItem } from '../../types';
+import type { ColumnItem } from '../../types';
 
-type TableRowProps = {
-  data: TableRowItem;
-  columns: ColumnItem[];
+type TableRowProps<T> = {
+  data: T;
+  columns: ColumnItem<T>[];
 };
 
-export const TableRow = ({ data, columns }: TableRowProps) => (
+export const TableRow = <T,>({ data, columns }: TableRowProps<T>) => (
   <tr>
-    {columns.map((column) => (
-      <td key={column.dataIndex}>{column.dataIndex ? data[column.dataIndex] : ''}</td>
-    ))}
+    {columns.map((column) => {
+      const value = column.dataIndex ? data[column.dataIndex] : '';
+      return <td key={String(column.dataIndex)}>{String(value ?? '')}</td>;
+    })}
   </tr>
 );
