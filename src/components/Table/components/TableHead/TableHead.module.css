@@ -1,9 +1,11 @@
 .head-td {
     background-color: var(--header-tag-bg);
-    position: sticky;
-    top: 0;
-    z-index: 2;
+    flex: 1 1 80px;
     color: var(--head-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
 }
 
 .tag-head-td {
@@ -19,6 +21,5 @@
     height: 40px;
     width: 40px;
     border-radius: 50%;
-    background-color: green;
     font-weight: 700;
 }
