@@ -1,0 +1,513 @@
+{
+  "data": {
+    "documents": [
+      {
+        "id": 5522,
+        "name": "TIER1-01-Guzman_thesis-Development_and_implementation_of_an_adaptive_HTTP_streaming_framework",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": null,
+        "type": "upload",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "5522",
+        "projectDocumentId": 12747,
+        "allTags": 0
+      },
+      {
+        "id": 5551,
+        "name": "Bang ’946",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US9507946B2",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Bang ’946",
+        "projectDocumentId": 11859,
+        "allTags": 0
+      },
+      {
+        "id": 5569,
+        "name": "Bongiorni ’997",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US11500997B1",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Bongiorni ’997",
+        "projectDocumentId": 11858,
+        "allTags": 0
+      },
+      {
+        "0": {
+          "id": 285,
+          "text": "First tag",
+          "color": "#DBDB29",
+          "order": 0,
+          "allExcerpt": 1
+        },
+        "id": 5148,
+        "name": "Bowman-Amuah ’068",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US6578068B1",
+        "type": "patent",
+        "showText": "show",
+        "status": "IN_PROGRESS",
+        "customName": "Bowman-Amuah ’068",
+        "projectDocumentId": 11419,
+        "allTags": 1
+      },
+      {
+        "id": 137,
+        "name": "Bull ’652",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US7890652B2",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Bull ’652",
+        "projectDocumentId": 683,
+        "allTags": 0
+      },
+      {
+        "0": {
+          "id": 285,
+          "text": "First tag",
+          "color": "#DBDB29",
+          "order": 0,
+          "allExcerpt": 2
+        },
+        "2": {
+          "id": 509,
+          "text": "Test",
+          "color": "#D7C6FF",
+          "order": 2,
+          "allExcerpt": 1
+        },
+        "3": {
+          "id": 510,
+          "text": "nnn",
+          "color": "#00F4EC",
+          "order": 3,
+          "allExcerpt": 1
+        },
+        "id": 21,
+        "name": "Byler ’936",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US5241936A",
+        "type": "patent",
+        "showText": "show",
+        "status": "IN_PROGRESS",
+        "customName": "Byler ’936",
+        "projectDocumentId": 341,
+        "allTags": 4
+      },
+      {
+        "4": {
+          "id": 511,
+          "text": "Devices/Functions",
+          "color": "#B6E445",
+          "order": 4,
+          "allExcerpt": 2
+        },
+        "id": 94,
+        "name": "Chowdhury ’235",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US7891235B2",
+        "type": "patent",
+        "showText": "show",
+        "status": "IN_PROGRESS",
+        "customName": "Chowdhury ’235",
+        "projectDocumentId": 399,
+        "allTags": 2
+      },
+      {
+        "0": {
+          "id": 285,
+          "text": "First tag",
+          "color": "#DBDB29",
+          "order": 0,
+          "allExcerpt": 2
+        },
+        "1": {
+          "id": 306,
+          "text": "223",
+          "color": "#FFACC3",
+          "order": 1,
+          "allExcerpt": 1
+        },
+        "2": {
+          "id": 509,
+          "text": "Test",
+          "color": "#D7C6FF",
+          "order": 2,
+          "allExcerpt": 1
+        },
+        "3": {
+          "id": 510,
+          "text": "nnn",
+          "color": "#00F4EC",
+          "order": 3,
+          "allExcerpt": 1
+        },
+        "id": 5555,
+        "name": "Eshkenazi ’997",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US10120997B2",
+        "type": "patent",
+        "showText": "show",
+        "status": "IN_PROGRESS",
+        "customName": "Eshkenazi ’997",
+        "projectDocumentId": 11956,
+        "allTags": 5
+      },
+      {
+        "1": {
+          "id": 306,
+          "text": "223",
+          "color": "#FFACC3",
+          "order": 1,
+          "allExcerpt": 2
+        },
+        "3": {
+          "id": 510,
+          "text": "nnn",
+          "color": "#00F4EC",
+          "order": 3,
+          "allExcerpt": 1
+        },
+        "id": 165,
+        "name": "Joao ’337",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US5878337A",
+        "type": "patent",
+        "showText": "show",
+        "status": "IN_PROGRESS",
+        "customName": "Joao ’337",
+        "projectDocumentId": 598,
+        "allTags": 3
+      },
+      {
+        "id": 158,
+        "name": "Jones ’318",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US6748318B1",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Jones ’318",
+        "projectDocumentId": 599,
+        "allTags": 0
+      },
+      {
+        "id": 7215,
+        "name": "Kahn ’540",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US8312540B1",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Kahn ’540",
+        "projectDocumentId": 15356,
+        "allTags": 0
+      },
+      {
+        "0": {
+          "id": 285,
+          "text": "First tag",
+          "color": "#DBDB29",
+          "order": 0,
+          "allExcerpt": 1
+        },
+        "3": {
+          "id": 510,
+          "text": "nnn",
+          "color": "#00F4EC",
+          "order": 3,
+          "allExcerpt": 1
+        },
+        "id": 7110,
+        "name": "Kato ’006",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US7859006B2",
+        "type": "patent",
+        "showText": "temp hide",
+        "status": "IN_PROGRESS",
+        "customName": "Kato ’006",
+        "projectDocumentId": 15352,
+        "allTags": 2
+      },
+      {
+        "id": 99,
+        "name": "Le ’234",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US7891234B2",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Le ’234",
+        "projectDocumentId": 419,
+        "allTags": 0
+      },
+      {
+        "0": {
+          "id": 285,
+          "text": "First tag",
+          "color": "#DBDB29",
+          "order": 0,
+          "allExcerpt": 7
+        },
+        "1": {
+          "id": 306,
+          "text": "223",
+          "color": "#FFACC3",
+          "order": 1,
+          "allExcerpt": 2
+        },
+        "id": 24,
+        "name": "Rixon ’593",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US5819593A",
+        "type": "patent",
+        "showText": "show",
+        "status": "IN_PROGRESS",
+        "customName": "Rixon ’593",
+        "projectDocumentId": 245,
+        "allTags": 9
+      },
+      {
+        "id": 88,
+        "name": "Sjovall ’594",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US5819594A",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Sjovall ’594",
+        "projectDocumentId": 302,
+        "allTags": 0
+      },
+      {
+        "id": 126,
+        "name": "Socci ’181",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US5916181A",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Socci ’181",
+        "projectDocumentId": 594,
+        "allTags": 0
+      },
+      {
+        "id": 157,
+        "name": "Suzuki ’675",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US6680675B1",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Suzuki ’675",
+        "projectDocumentId": 596,
+        "allTags": 0
+      },
+      {
+        "1": {
+          "id": 306,
+          "text": "223",
+          "color": "#FFACC3",
+          "order": 1,
+          "allExcerpt": 1
+        },
+        "id": 2998,
+        "name": "Takenaka ’634",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US7606634B2",
+        "type": "patent",
+        "showText": "show",
+        "status": "IN_PROGRESS",
+        "customName": "Takenaka ’634",
+        "projectDocumentId": 15355,
+        "allTags": 1
+      },
+      {
+        "id": 5563,
+        "name": "THOMAS ’265",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US10616265B2",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "THOMAS ’265",
+        "projectDocumentId": 11955,
+        "allTags": 0
+      },
+      {
+        "id": 7232,
+        "name": "Thomas ’392",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US11184392B2",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Thomas ’392",
+        "projectDocumentId": 14730,
+        "allTags": 0
+      },
+      {
+        "id": 153,
+        "name": "Thrane ’150",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US6732150B1",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Thrane ’150",
+        "projectDocumentId": 595,
+        "allTags": 0
+      },
+      {
+        "id": 162,
+        "name": "Treyz ’835",
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "US6587835B1",
+        "type": "patent",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": "Treyz ’835",
+        "projectDocumentId": 597,
+        "allTags": 0
+      },
+      {
+        "id": 7530,
+        "name": null,
+        "groupName": null,
+        "groupNameStr": null,
+        "notes": "",
+        "number": "EP2383652A1",
+        "type": "application",
+        "showText": "show",
+        "status": "NOT_STARTED",
+        "customName": null,
+        "projectDocumentId": 15354,
+        "allTags": 0
+      }
+    ],
+    "excerptsCount": [
+      {
+        "id": 24,
+        "customName": "Rixon ’593",
+        "excerptsCount": 7
+      },
+      {
+        "id": 21,
+        "customName": "Byler ’936",
+        "excerptsCount": 4
+      }
+    ],
+    "tagsForHeader": [
+      {
+        "id": 285,
+        "order": 0,
+        "text": "First tag",
+        "color": "#DBDB29",
+        "tagColor": {
+          "color": "#DBDB29"
+        }
+      },
+      {
+        "id": 306,
+        "order": 1,
+        "text": "223",
+        "color": "#FFACC3",
+        "tagColor": {
+          "color": "#FFACC3"
+        }
+      },
+      {
+        "id": 509,
+        "order": 2,
+        "text": "Test",
+        "color": "#D7C6FF",
+        "tagColor": {
+          "color": "#D7C6FF"
+        }
+      },
+      {
+        "id": 510,
+        "order": 3,
+        "text": "nnn",
+        "color": "#00F4EC",
+        "tagColor": {
+          "color": "#00F4EC"
+        }
+      },
+      {
+        "id": 511,
+        "order": 4,
+        "text": "Devices/Functions",
+        "color": "#B6E445",
+        "tagColor": {
+          "color": "#B6E445"
+        }
+      },
+      {
+        "id": 23946,
+        "order": 5,
+        "text": "asd",
+        "color": "#FFB59D",
+        "tagColor": {
+          "color": "#FFB59D"
+        }
+      }
+    ]
+  },
+  "datetime": 1771414729972,
+  "info": "OK",
+  "misc": "NO_ADDITIONAL_INFORMATION",
+  "request": "/api/excerpts/documents/50 [GET]",
+  "status": 200
+}
