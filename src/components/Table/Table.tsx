@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { TableRow } from './components';
 import { TableHead } from './components';
-import { STATIC_COLUMNS as staticColumns } from './constants/columns';
+import { STATIC_LEFT_COLUMNS, STATIC_RIGHT_COLUMNS } from './constants/columns';
 
 import styles from './Table.module.css';
 
@@ -40,7 +40,7 @@ export const Table = ({ data }: TableProps) => {
   const dynamicColumns = data.tagsForHeader.map((tag) => {
     return tag.order;
   });
-  const allColumns = [...staticColumns, ...dynamicColumns];
+  const allColumns = [...STATIC_LEFT_COLUMNS, ...dynamicColumns, ...STATIC_RIGHT_COLUMNS];
   return (
     <div className={styles['table-container']}>
       <table>
