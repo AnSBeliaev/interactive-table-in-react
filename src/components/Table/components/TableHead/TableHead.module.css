@@ -1,0 +1,25 @@
+.head-td {
+    background-color: var(--header-tag-bg);
+    flex: 1 1 80px;
+    color: var(--head-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+}
+
+.tag-head-td {
+    width: 40px;
+}
+
+.tag-head-td div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    font-weight: 700;
+}
