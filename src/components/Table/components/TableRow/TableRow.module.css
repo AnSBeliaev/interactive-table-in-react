@@ -1,5 +1,6 @@
 .cell-view {
     width: 60px;
+    max-width: 60px;
     position: sticky;
     left: 0;
     background-color: var(--table-tag-bg);
@@ -7,8 +8,23 @@
 
 .cell-name {
     width: 240px;
+    max-width: 240px;
     position: sticky;
-    left: 0;
+    left: 60px;
     text-overflow: ellipsis;
     background-color: var(--table-tag-bg);
+}
+
+.cell-allTags {
+    width: 80px;
+    max-width: 80px;
+    position: sticky;
+    right: 240px;
+}
+
+.cell-notes {
+    width: 240px;
+    max-width: 240px;
+    position: sticky;
+    right: 0;
 }

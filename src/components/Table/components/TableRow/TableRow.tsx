@@ -16,7 +16,7 @@ export const TableRow = ({ data, columns }: TableRow) => {
             ? column.dataIndex
               ? data[column.dataIndex]
               : ''
-            : data.tagsByOrder?.[column]?.order;
+            : data.tagsByOrder?.[column]?.allExcerpt;
         return (
           <td
             key={typeof column !== 'number' ? column.dataIndex : column}

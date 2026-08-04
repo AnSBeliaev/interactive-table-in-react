@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
-import { TableRow } from './components';
-import { TableHead } from './components';
+import { TableRow, TableHead, TableFooter } from './components';
 import { STATIC_LEFT_COLUMNS, STATIC_RIGHT_COLUMNS } from './constants/columns';
 
 import styles from './Table.module.css';
@@ -41,6 +40,26 @@ export const Table = ({ data }: TableProps) => {
     return tag.order;
   });
   const allColumns = [...STATIC_LEFT_COLUMNS, ...dynamicColumns, ...STATIC_RIGHT_COLUMNS];
+
+  const allExcerptSums: Record<number, number> = {};
+
+  normalizedDocuments.forEach((document) => {
+    if (document.tagsByOrder) {
+      document.tagsByOrder.forEach((tag) => {
+        const value = Number(tag.allExcerpt) || 0;
+        allExcerptSums[tag.order] = (allExcerptSums[tag.order] ?? 0) + value;
+      });
+    }
+  });
+
+  const allTagsSum = useMemo(() => {
+    let sum = 0;
+    normalizedDocuments.forEach((document) => {
+      sum += document.allTags;
+    });
+    return sum;
+  }, [normalizedDocuments]);
+
   return (
     <div className={styles['table-container']}>
       <table>
@@ -67,6 +86,9 @@ export const Table = ({ data }: TableProps) => {
             return <TableRow key={tableRowItem.id} data={tableRowItem} columns={allColumns} />;
           })}
         </tbody>
+        <tfoot>
+          <TableFooter allExcerptSums={allExcerptSums} allTagsSum={allTagsSum} columns={allColumns} />
+        </tfoot>
       </table>
     </div>
   );

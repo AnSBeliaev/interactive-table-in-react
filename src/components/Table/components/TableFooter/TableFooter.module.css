@@ -1,0 +1,8 @@
+/* TODO: Повтор стиля хедера */  
+.table-footer {
+    background-color: var(--header-tag-bg);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    color: var(--head-text);
+}
