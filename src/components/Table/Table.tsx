@@ -5,36 +5,16 @@ import { STATIC_LEFT_COLUMNS, STATIC_RIGHT_COLUMNS } from './constants/columns';
 import styles from './Table.module.css';
 
 import type { TableData, TableRowItem, Tag } from './types';
+import { useNormalizeDocuments } from './hooks';
 
 type TableProps = {
   data: TableData;
 };
 
-const isTag = (value: string | number | Tag | null): value is Tag => {
-  return Boolean(value && typeof value === 'object' && 'allExcerpt' in value);
-};
-
 type NormalisedTableRowItem = TableRowItem & { tagsByOrder?: Tag[] };
 
 export const Table = ({ data }: TableProps) => {
-  const normalizedDocuments: NormalisedTableRowItem[] = useMemo(() => {
-    return data.documents.map((document) => {
-      const tagsByOrder: Tag[] = [];
-      const documentEntries: [string, string | number | Tag | null][] = Object.entries(document);
-
-      documentEntries.forEach((item) => {
-        const value = item[1];
-        if (isTag(value)) {
-          tagsByOrder.push(value);
-        }
-      });
-
-      return {
-        ...document,
-        tagsByOrder: [...tagsByOrder],
-      };
-    });
-  }, [data.documents]);
+  const normalizedDocuments: NormalisedTableRowItem[] = useNormalizeDocuments({ documents: data.documents });
 
   const dynamicColumns = data.tagsForHeader.map((tag) => {
     return tag.order;
