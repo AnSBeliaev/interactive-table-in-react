@@ -1,7 +1,8 @@
 :root {
   --text: #6b6375;
   --head-text: #000;
-  --header-tag-bg: #EFF0F5;
+  --header-tag-dark-bg: #EDF2F7;
+  --header-tag-light-bg: #F8FAFC;
   --table-tag-bg: #fff;
   --border: #e4e8ec;
 

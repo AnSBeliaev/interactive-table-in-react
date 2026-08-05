@@ -8,7 +8,7 @@ type TableRowProps<T> = {
 
 export const TableRow = <T extends TableRowItem>({ data, columns }: TableRowProps<T>) => {
   return (
-    <tr>
+    <div className={styles['table-row']}>
       {columns.map((column) => {
         const cellValue =
           typeof column !== 'number'
@@ -17,14 +17,14 @@ export const TableRow = <T extends TableRowItem>({ data, columns }: TableRowProp
               : ''
             : data.tagsByOrder?.[column]?.allExcerpt;
         return (
-          <td
+          <div
             key={typeof column === 'number' ? column : column.id}
-            className={styles[`cell-${typeof column !== 'number' ? String(column.dataIndex) : 'tag'}`]}
+            className={styles[`table-cell-${typeof column !== 'number' ? String(column.id) : 'tag'}`]}
           >
             {cellValue ? String(cellValue) : ''}
-          </td>
+          </div>
         );
       })}
-    </tr>
+    </div>
   );
 };

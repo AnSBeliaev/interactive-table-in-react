@@ -47,25 +47,38 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
         <div className={styles['table-header']}>
           <div className={styles['header-left']}>
             {leftColumns.map((headItem) => {
-              return <TableHead key={headItem.dataIndex} item={headItem.title} />;
+              return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
             })}
           </div>
           <div className={styles['header-mid']}>
             {data.tagsForHeader.map((tag) => (
-              <TableHead key={tag.order} item={String(tag.order + 1)} tagColor={tag.color} />
+              <TableHead key={tag.order} item={String(tag.order + 1)} tagColor={tag.color} className={String(tag.id)} />
             ))}
           </div>
           <div className={styles['header-right']}>
             {rightColumns.map((headItem) => {
-              return <TableHead key={headItem.dataIndex} item={headItem.title} />;
+              console.log('headItem.id: >>>', headItem.id);
+              return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
             })}
           </div>
         </div>
         <div className={styles['table-viewport']}>
           <div className={styles['table-body']}>
-            {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-              return <TableRow key={tableRowItem.id} data={tableRowItem} columns={allColumns} />;
-            })}
+            <div className={styles['body-left']}>
+              {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
+                return <TableRow key={tableRowItem.id} data={tableRowItem} columns={leftColumns} />;
+              })}
+            </div>
+            <div className={styles['body-mid']}>
+              {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
+                return <TableRow key={tableRowItem.id} data={tableRowItem} columns={dynamicColumns} />;
+              })}
+            </div>
+            <div className={styles['body-right']}>
+              {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
+                return <TableRow key={tableRowItem.id} data={tableRowItem} columns={rightColumns} />;
+              })}
+            </div>
           </div>
         </div>
         <div className={styles['table-footer']}>

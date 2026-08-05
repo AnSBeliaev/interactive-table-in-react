@@ -1,6 +1,5 @@
 .head-td {
-    background-color: var(--header-tag-bg);
-    flex: 1 1 80px;
+    background: linear-gradient(180deg, var(--header-tag-light-bg) 0%, var(--header-tag-dark-bg) 100%);
     color: var(--head-text);
     display: flex;
     align-items: center;
@@ -8,11 +7,27 @@
     border: 1px solid var(--border);
 }
 
-.tag-head-td {
-    width: 40px;
+.head-view {
+    flex: 1;
 }
 
-.tag-head-td div {
+.head-name {
+    flex: 2;
+}
+
+.head-allTags {
+    flex: 1;
+}
+
+.head-notes {
+    flex: 2;
+}
+
+.head-td-tag {
+    width: 60px;
+}
+
+.head-td-tag div {
     display: flex;
     align-items: center;
     justify-content: center;
