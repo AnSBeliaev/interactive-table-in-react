@@ -36,4 +36,5 @@
 
 .footer-empty-td {
     flex: 2;
+    background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
 }

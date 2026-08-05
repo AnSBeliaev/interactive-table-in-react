@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { TableRow, TableHead, TableFooter } from './components';
-import { useNormalizeDocuments } from './hooks';
+import { useNormalizeDocuments, useSyncScroll } from './hooks';
 
 import styles from './Table.module.css';
 
@@ -14,6 +14,8 @@ type TableProps<T> = {
 };
 
 export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowItem>) => {
+  const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
+
   const { documents, tagsForHeader } = data;
   const normalizedDocuments = useNormalizeDocuments({ documents });
 
@@ -49,14 +51,23 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
               return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
             })}
           </div>
-          <div className={styles['header-mid']}>
+          <div
+            ref={headerScrollRef}
+            onScroll={() =>
+              handleScroll({
+                sourceRef: headerScrollRef,
+                firstTargetRef: bodyScrollRef,
+                secondTargetRef: footerScrollRef,
+              })
+            }
+            className={styles['header-mid']}
+          >
             {data.tagsForHeader.map((tag) => (
               <TableHead key={tag.order} item={String(tag.order + 1)} tagColor={tag.color} className={String(tag.id)} />
             ))}
           </div>
           <div className={styles['header-right']}>
             {rightColumns.map((headItem) => {
-              console.log('headItem.id: >>>', headItem.id);
               return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
             })}
           </div>
@@ -68,7 +79,17 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 return <TableRow key={tableRowItem.id} data={tableRowItem} columns={leftColumns} />;
               })}
             </div>
-            <div className={styles['body-mid']}>
+            <div
+              ref={bodyScrollRef}
+              onScroll={() =>
+                handleScroll({
+                  sourceRef: bodyScrollRef,
+                  firstTargetRef: headerScrollRef,
+                  secondTargetRef: footerScrollRef,
+                })
+              }
+              className={styles['body-mid']}
+            >
               {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
                 return <TableRow key={tableRowItem.id} data={tableRowItem} columns={dynamicColumns} />;
               })}
@@ -84,7 +105,17 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           <div className={styles['footer-left']}>
             <TableFooter aria="left" />
           </div>
-          <div className={styles['footer-mid']}>
+          <div
+            ref={footerScrollRef}
+            onScroll={() =>
+              handleScroll({
+                sourceRef: footerScrollRef,
+                firstTargetRef: headerScrollRef,
+                secondTargetRef: bodyScrollRef,
+              })
+            }
+            className={styles['footer-mid']}
+          >
             {data.tagsForHeader.map((tag) => (
               <TableFooter aria="mid" allExcerptSums={allExcerptSums} allTagsSum={allTagsSum} tag={tag} />
             ))}
