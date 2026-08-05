@@ -21,7 +21,6 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     return tag.order;
   });
 
-  const allColumns = [...leftColumns, ...dynamicColumns, ...rightColumns];
   const allExcerptSums: Record<number, number> = {};
 
   normalizedDocuments.forEach((document) => {
@@ -82,7 +81,19 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           </div>
         </div>
         <div className={styles['table-footer']}>
-          <TableFooter allExcerptSums={allExcerptSums} allTagsSum={allTagsSum} columns={allColumns} />
+          <div className={styles['footer-left']}>
+            <TableFooter aria="left" />
+          </div>
+          <div className={styles['footer-mid']}>
+            {data.tagsForHeader.map((tag) => (
+              <TableFooter aria="mid" allExcerptSums={allExcerptSums} allTagsSum={allTagsSum} tag={tag} />
+            ))}
+          </div>
+          <div className={styles['footer-right']}>
+            {rightColumns.map((_, index) => {
+              return <TableFooter aria="right" allTagsSum={index === 0 ? allTagsSum : null} />;
+            })}
+          </div>
         </div>
       </div>
     </div>

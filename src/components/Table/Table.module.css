@@ -50,6 +50,13 @@
     width: 1200px;
 }
 
+.table-footer {
+    display: flex;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    width: 1200px;
+}
+
 .body-left {
     height: 60px;
     max-width: 300px;
@@ -74,3 +81,25 @@
     display: flex;
     flex-direction: column;
   }
+
+  .footer-left {
+    height: 60px;
+    max-width: 300px;
+    flex: 0 0 300px;
+    display: flex;
+  }
+
+  .footer-mid {
+    flex: 0 0 300px;
+    height: 60px;
+    max-width: 300px;
+    min-width: min-content;
+    display: flex;
+    overflow-x: auto;
+}
+
+.footer-right {
+    flex: 1 1 600px;
+    height: 60px;
+    display: flex;
+}
