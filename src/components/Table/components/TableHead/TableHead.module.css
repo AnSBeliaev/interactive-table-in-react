@@ -1,0 +1,42 @@
+.head-td {
+    background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
+    color: var(--head-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+}
+
+.head-view {
+    flex: 1;
+}
+
+.head-name {
+    flex: 2;
+}
+
+.head-allTags {
+    flex: 1;
+}
+
+.head-notes {
+    flex: 2;
+}
+
+.head-td-tag {
+    height: 60px;
+    flex: 0 0 60px;
+    width: 60px;
+}
+
+.head-td-tag div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    font-weight: 700;
+}

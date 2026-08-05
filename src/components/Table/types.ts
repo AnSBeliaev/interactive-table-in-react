@@ -40,10 +40,10 @@ export type TagsForHeader = {
   tagColor: TagColor;
 };
 
-export type TableData = {
-  documents: TableRowItem[];
+export type TableData<T> = {
+  documents: T[];
   excerptsCount: ExcerptsCount[];
-  tagsForHeader: { [order: number]: TagsForHeader }[];
+  tagsForHeader: TagsForHeader[];
 };
 
 export type ColumnItem<T> = {
@@ -51,3 +51,5 @@ export type ColumnItem<T> = {
   dataIndex?: keyof T;
   id: string;
 };
+
+export type TableColumn<T> = ColumnItem<T> | number;
