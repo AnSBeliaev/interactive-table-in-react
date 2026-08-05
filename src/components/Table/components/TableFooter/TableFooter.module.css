@@ -16,25 +16,21 @@
     border: 1px solid var(--border);
 }
 
-.footer-left-td {
+.footer-documents {
     width: 100%;
     display: flex;
+    flex: 1;
     align-items: center;
     justify-content: center;
     background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
 }
 
-.footer-mid-td {
-    width: 60px;
-    background: var(--table-tag-bg);
-}
-
-.footer-sum-td {
+.footer-allTags {
     flex: 1;
     background: var(--table-tag-bg);
 }
 
-.footer-empty-td {
+.footer-notes {
     flex: 2;
     background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
 }

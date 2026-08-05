@@ -103,7 +103,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
         </div>
         <div className={styles['table-footer']}>
           <div className={styles['footer-left']}>
-            <TableFooter aria="left" />
+            <TableFooter value="All documents" className="documents" />
           </div>
           <div
             ref={footerScrollRef}
@@ -116,14 +116,18 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             }
             className={styles['footer-mid']}
           >
-            {data.tagsForHeader.map((tag) => (
-              <TableFooter aria="mid" allExcerptSums={allExcerptSums} allTagsSum={allTagsSum} tag={tag} />
+            {tagsForHeader.map((tag) => (
+              <TableFooter key={tag.order} value={allExcerptSums[tag.order]} className="tag" />
             ))}
           </div>
           <div className={styles['footer-right']}>
-            {rightColumns.map((_, index) => {
-              return <TableFooter aria="right" allTagsSum={index === 0 ? allTagsSum : null} />;
-            })}
+            {rightColumns.map((column) => (
+              <TableFooter
+                key={column.id}
+                value={column.dataIndex === 'allTags' ? allTagsSum : ''}
+                className={column.id}
+              />
+            ))}
           </div>
         </div>
       </div>
