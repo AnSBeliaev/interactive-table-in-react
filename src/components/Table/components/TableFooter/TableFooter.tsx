@@ -19,7 +19,7 @@ export const TableFooter = ({ allExcerptSums, allTagsSum, aria, tag }: TableRow)
   };
   return (
     <>
-      {isLeft && <div className={`${styles['footer-td']} ${styles['footer-left-td']}`}>All documents</div>}
+      {isLeft && <div className={`${styles['footer-left-td']}`}>All documents</div>}
       {isMid && <div className={`${styles['footer-td']}  ${styles['footer-mid-td']}`}>{getAllExcerptSum()}</div>}
       {isRight && (
         <div className={`${styles['footer-td']} ${allTagsSum ? styles['footer-sum-td'] : styles['footer-empty-td']}`}>

@@ -12,7 +12,6 @@
 .table-cell-name {
     height: 60px;
     flex: 2;
-    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -21,7 +20,7 @@
 
 .table-cell-tag {
     height: 60px;
-    flex: 2;
+    flex: 0 0 60px;
     width: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
