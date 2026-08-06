@@ -22,6 +22,7 @@
     flex: 1;
     align-items: center;
     justify-content: center;
+    color: var(--head-cell-text) !important;
     background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
 }
 
@@ -41,6 +42,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: 700;
+    color: var(--cell-text);
 }
 
 .footer-allTags .inner-footer-cell {

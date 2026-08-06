@@ -1,6 +1,6 @@
 .head-td {
     background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
-    color: var(--head-text);
+    color: var(--dark-text);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -9,18 +9,22 @@
 
 .head-view {
     flex: 1;
+    color: var(--head-cell-text) !important;
 }
 
 .head-name {
     flex: 2;
+    color: var(--head-cell-text) !important;
 }
 
 .head-allTags {
     flex: 1;
+    color: var(--head-cell-text) !important;
 }
 
 .head-notes {
     flex: 2;
+    color: var(--head-cell-text) !important;
 }
 
 .head-td-tag {

@@ -11,7 +11,7 @@ export const TableFooter = ({ value, className, isTableTag, getCellBackground }:
   return (
     <div className={`${styles['footer-td']} ${styles[`footer-${className}`]}`}>
       <div
-        className={`${styles[isTableTag ? 'inner-footer-cell' : '']}`}
+        className={isTableTag ? `${styles['inner-footer-cell']}` : ''}
         style={{
           backgroundColor: `${getCellBackground ? `${getCellBackground({ value: String(value) })}` : ''}`,
         }}
