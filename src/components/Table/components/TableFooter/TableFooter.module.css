@@ -34,3 +34,15 @@
     flex: 2;
     background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
 }
+
+.inner-footer-cell {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-allTags .inner-footer-cell {
+    width: 95%;
+}

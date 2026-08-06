@@ -6,6 +6,7 @@ import { useNormalizeDocuments, useSyncScroll } from './hooks';
 import styles from './Table.module.css';
 
 import type { ColumnItem, TableRowItem, TableData } from './types';
+import { createGetCellBackground } from './helpers';
 
 type TableProps<T> = {
   data: TableData<T>;
@@ -58,18 +59,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     return { minAllExcerpt, maxAllExcerpt };
   }, [normalizedDocuments]);
 
-  const { minAllTags, maxAllTags } = useMemo(() => {
-    let minAllTags: number | null = null;
-    let maxAllTags: number | null = null;
-    normalizedDocuments.forEach((document) => {
-      if (minAllTags == null) minAllTags = document.allTags;
-      if (maxAllTags == null) maxAllTags = document.allTags;
-      if (document.allTags < minAllTags) minAllTags = document.allTags;
-      if (document.allTags > maxAllTags) maxAllTags = document.allTags;
-    });
-    if (minAllTags == 0) minAllTags = 1;
-    return { minAllTags, maxAllTags };
-  }, [normalizedDocuments]);
+  const getCellBackground = createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt });
 
   return (
     <div className={styles['table-container']}>
@@ -125,8 +115,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                     key={tableRowItem.id}
                     data={tableRowItem}
                     columns={dynamicColumns}
-                    minAllExcerpt={minAllExcerpt}
-                    maxAllExcerpt={maxAllExcerpt}
+                    getCellBackground={getCellBackground}
                   />
                 );
               })}
@@ -138,8 +127,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                     key={tableRowItem.id}
                     data={tableRowItem}
                     columns={rightColumns}
-                    minAllExcerpt={minAllTags}
-                    maxAllExcerpt={maxAllTags}
+                    getCellBackground={getCellBackground}
                   />
                 );
               })}
@@ -161,16 +149,17 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             }
             className={styles['footer-mid']}
           >
-            {tagsForHeader.map((tag) => (
-              <TableFooter key={tag.order} value={allExcerptSums[tag.order]} className="tag" />
-            ))}
+            {tagsForHeader.map((tag) => {
+              return <TableFooter key={tag.order} value={allExcerptSums[tag.order]} className="tag" isTableTag />;
+            })}
           </div>
           <div className={styles['footer-right']}>
             {rightColumns.map((column) => (
               <TableFooter
                 key={column.id}
-                value={column.dataIndex === 'allTags' ? allTagsSum : ''}
+                value={column.id === 'allTags' ? allTagsSum : null}
                 className={column.id}
+                isFullColoredTag={column.id === 'allTags'}
               />
             ))}
           </div>
