@@ -40,7 +40,6 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     normalizedDocuments.forEach((document) => {
       sum += document.allTags;
     });
-    console.log('normalizedDocuments: >>>', normalizedDocuments);
     return sum;
   }, [normalizedDocuments]);
 
@@ -150,7 +149,15 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             className={styles['footer-mid']}
           >
             {tagsForHeader.map((tag) => {
-              return <TableFooter key={tag.order} value={allExcerptSums[tag.order]} className="tag" isTableTag />;
+              return (
+                <TableFooter
+                  key={tag.order}
+                  value={allExcerptSums[tag.order]}
+                  className="tag"
+                  isTableTag
+                  getCellBackground={getCellBackground}
+                />
+              );
             })}
           </div>
           <div className={styles['footer-right']}>
@@ -159,7 +166,8 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 key={column.id}
                 value={column.id === 'allTags' ? allTagsSum : null}
                 className={column.id}
-                isFullColoredTag={column.id === 'allTags'}
+                isTableTag
+                getCellBackground={getCellBackground}
               />
             ))}
           </div>
