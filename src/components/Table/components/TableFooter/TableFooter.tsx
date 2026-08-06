@@ -6,6 +6,5 @@ type TableFooterProps = {
 };
 
 export const TableFooter = ({ value, className }: TableFooterProps) => {
-  console.log('className >>>', className);
   return <div className={`${styles['footer-td']} ${styles[`footer-${className}`]}`}>{value ?? ''}</div>;
 };

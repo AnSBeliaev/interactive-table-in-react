@@ -39,7 +39,23 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     normalizedDocuments.forEach((document) => {
       sum += document.allTags;
     });
+    console.log('normalizedDocuments: >>>', normalizedDocuments);
     return sum;
+  }, [normalizedDocuments]);
+
+  const { minAllExcerpt, maxAllExcerpt } = useMemo(() => {
+    let minAllExcerpt: string | null = null;
+    let maxAllExcerpt: string | null = null;
+    normalizedDocuments.forEach((document) => {
+      if (!document.tagsByOrder) return;
+      document.tagsByOrder.forEach((tag) => {
+        if (!minAllExcerpt) minAllExcerpt = tag.allExcerpt;
+        if (!maxAllExcerpt) maxAllExcerpt = tag.allExcerpt;
+        if (tag.allExcerpt < minAllExcerpt) minAllExcerpt = tag.allExcerpt;
+        if (tag.allExcerpt > maxAllExcerpt) maxAllExcerpt = tag.allExcerpt;
+      });
+    });
+    return { minAllExcerpt, maxAllExcerpt };
   }, [normalizedDocuments]);
 
   return (
@@ -91,12 +107,28 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
               className={styles['body-mid']}
             >
               {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-                return <TableRow key={tableRowItem.id} data={tableRowItem} columns={dynamicColumns} />;
+                return (
+                  <TableRow
+                    key={tableRowItem.id}
+                    data={tableRowItem}
+                    columns={dynamicColumns}
+                    minAllExcerpt={minAllExcerpt}
+                    maxAllExcerpt={maxAllExcerpt}
+                  />
+                );
               })}
             </div>
             <div className={styles['body-right']}>
               {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-                return <TableRow key={tableRowItem.id} data={tableRowItem} columns={rightColumns} />;
+                return (
+                  <TableRow
+                    key={tableRowItem.id}
+                    data={tableRowItem}
+                    columns={rightColumns}
+                    minAllExcerpt={minAllExcerpt}
+                    maxAllExcerpt={maxAllExcerpt}
+                  />
+                );
               })}
             </div>
           </div>
