@@ -1,30 +1,19 @@
+import { getPercentage } from '../../helpers';
 import type { TableColumn, TableRowItem } from '../../types';
 import styles from './TableRow.module.css';
 
 type TableRowProps<T> = {
   data: T;
   columns: TableColumn<T>[];
-  minAllExcerpt?: string | null;
-  maxAllExcerpt?: string | null;
+  minAllExcerpt?: number | null;
+  maxAllExcerpt?: number | null;
 };
 
 export const TableRow = <T extends TableRowItem>({ data, columns, minAllExcerpt, maxAllExcerpt }: TableRowProps<T>) => {
-  function getPercentage(min: number, max: number, current: number) {
-    if (current < min) return '00';
-    if (current >= max) return '';
-
-    const progress = (current - min) / (max - min);
-
-    const percent = 15 + progress * (100 - 5);
-    const percentage = Math.round(percent / 5) * 5;
-    if (percentage === 100) return '';
-    return String(percentage);
-  }
-
   return (
     <div className={styles['table-row']}>
       {columns.map((column) => {
-        let currentOpacity: string | null = null;
+        let percent: number | null = null;
         const isTag = typeof column === 'number';
         const hasInnerBackground = typeof column === 'number' || column.id === 'allTags';
         const isTableTag = isTag && data.tagsByOrder?.[column]?.allExcerpt;
@@ -35,8 +24,24 @@ export const TableRow = <T extends TableRowItem>({ data, columns, minAllExcerpt,
               : ''
             : data.tagsByOrder?.[column]?.allExcerpt;
 
-        if ((isTag && data.tagsByOrder?.[column]?.allExcerpt) || hasInnerBackground) {
-          currentOpacity = getPercentage(Number(minAllExcerpt), Number(maxAllExcerpt), Number(cellValue));
+        const current = Number(cellValue);
+        const min = Number(minAllExcerpt);
+        const max = Number(maxAllExcerpt);
+        const canColor =
+          current > 0 &&
+          cellValue !== '' &&
+          cellValue != null &&
+          Number.isFinite(current) &&
+          Number.isFinite(min) &&
+          Number.isFinite(max) &&
+          max > min;
+
+        if (((isTag && data.tagsByOrder?.[column]?.allExcerpt) || hasInnerBackground) && canColor) {
+          percent = getPercentage({
+            min,
+            max,
+            current,
+          });
         }
 
         return (
@@ -47,7 +52,7 @@ export const TableRow = <T extends TableRowItem>({ data, columns, minAllExcerpt,
             <div
               className={styles[`${hasInnerBackground ? 'inner-table-cell' : ''}`]}
               style={{
-                backgroundColor: `${isTableTag || hasInnerBackground ? `${currentOpacity ? `#66b8ee${currentOpacity}` : '#66b8ee'}` : ''}`,
+                backgroundColor: `${isTableTag || hasInnerBackground ? `${percent ? `rgba(102, 184, 238, ${percent / 100})` : ''}` : ''}`,
               }}
             >
               {cellValue ? String(cellValue) : ''}

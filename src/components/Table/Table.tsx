@@ -44,18 +44,31 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
   }, [normalizedDocuments]);
 
   const { minAllExcerpt, maxAllExcerpt } = useMemo(() => {
-    let minAllExcerpt: string | null = null;
-    let maxAllExcerpt: string | null = null;
+    let minAllExcerpt: number | null = null;
+    let maxAllExcerpt: number | null = null;
     normalizedDocuments.forEach((document) => {
       if (!document.tagsByOrder) return;
       document.tagsByOrder.forEach((tag) => {
-        if (!minAllExcerpt) minAllExcerpt = tag.allExcerpt;
-        if (!maxAllExcerpt) maxAllExcerpt = tag.allExcerpt;
-        if (tag.allExcerpt < minAllExcerpt) minAllExcerpt = tag.allExcerpt;
-        if (tag.allExcerpt > maxAllExcerpt) maxAllExcerpt = tag.allExcerpt;
+        if (minAllExcerpt == null) minAllExcerpt = Number(tag.allExcerpt);
+        if (maxAllExcerpt == null) maxAllExcerpt = Number(tag.allExcerpt);
+        if (Number(tag.allExcerpt) < minAllExcerpt) minAllExcerpt = Number(tag.allExcerpt);
+        if (Number(tag.allExcerpt) > maxAllExcerpt) maxAllExcerpt = Number(tag.allExcerpt);
       });
     });
     return { minAllExcerpt, maxAllExcerpt };
+  }, [normalizedDocuments]);
+
+  const { minAllTags, maxAllTags } = useMemo(() => {
+    let minAllTags: number | null = null;
+    let maxAllTags: number | null = null;
+    normalizedDocuments.forEach((document) => {
+      if (minAllTags == null) minAllTags = document.allTags;
+      if (maxAllTags == null) maxAllTags = document.allTags;
+      if (document.allTags < minAllTags) minAllTags = document.allTags;
+      if (document.allTags > maxAllTags) maxAllTags = document.allTags;
+    });
+    if (minAllTags == 0) minAllTags = 1;
+    return { minAllTags, maxAllTags };
   }, [normalizedDocuments]);
 
   return (
@@ -125,8 +138,8 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                     key={tableRowItem.id}
                     data={tableRowItem}
                     columns={rightColumns}
-                    minAllExcerpt={minAllExcerpt}
-                    maxAllExcerpt={maxAllExcerpt}
+                    minAllExcerpt={minAllTags}
+                    maxAllExcerpt={maxAllTags}
                   />
                 );
               })}
