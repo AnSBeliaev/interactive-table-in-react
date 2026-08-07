@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 
+import styles from './ToggleSwitch.module.css';
+
 import { ThemeContext } from '../../constext';
 import type { ThemeContextValue } from '../../constext/theme-context/ThemeContext';
 
@@ -9,12 +11,13 @@ const ToggleSwitch = () => {
   const { toggleMode } = theme;
 
   return (
-    <div className="ToggleSwitch-div">
-      <label className="switch">
-        <input onClick={toggleMode} type="checkbox" />
-        <span></span>
-      </label>
-    </div>
+    <label className={styles['switch-container']}>
+      <span className={styles['switch-label']}>Theme</span>
+      <div className={styles['switch-wrapper']}>
+        <input onClick={toggleMode} type="checkbox" className={styles['switch-input']} />
+        <span className={styles['switch-slider']} />
+      </div>
+    </label>
   );
 };
 
