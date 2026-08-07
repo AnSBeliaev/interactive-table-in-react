@@ -45,6 +45,10 @@
     background-color: var(--table-tag-bg);
 }
 
+.table-cell-selected-tag {
+  background-color: #ffff80;
+}
+
 .table-cell-allTags {
     flex: 1;
     height: 60px;
@@ -82,4 +86,5 @@
     justify-content: center;
     font-weight: 700;
     color: var(--cell-text);
+    cursor: default;
 }
