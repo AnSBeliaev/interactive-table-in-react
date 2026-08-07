@@ -6,6 +6,7 @@ import { useNormalizeDocuments, useSyncScroll } from './hooks';
 import styles from './Table.module.css';
 
 import type { ColumnItem, TableRowItem, TableData } from './types';
+import { createGetCellBackground } from './helpers';
 
 type TableProps<T> = {
   data: TableData<T>;
@@ -42,95 +43,143 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     return sum;
   }, [normalizedDocuments]);
 
+  const { minAllExcerpt, maxAllExcerpt } = useMemo(() => {
+    let minAllExcerpt: number | null = null;
+    let maxAllExcerpt: number | null = null;
+    normalizedDocuments.forEach((document) => {
+      if (!document.tagsByOrder) return;
+      document.tagsByOrder.forEach((tag) => {
+        if (minAllExcerpt == null) minAllExcerpt = Number(tag.allExcerpt);
+        if (maxAllExcerpt == null) maxAllExcerpt = Number(tag.allExcerpt);
+        if (Number(tag.allExcerpt) < minAllExcerpt) minAllExcerpt = Number(tag.allExcerpt);
+        if (Number(tag.allExcerpt) > maxAllExcerpt) maxAllExcerpt = Number(tag.allExcerpt);
+      });
+    });
+    return { minAllExcerpt, maxAllExcerpt };
+  }, [normalizedDocuments]);
+
+  const getCellBackground = createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt });
+
   return (
-    <div className={styles['table-container']}>
-      <div className={styles['table']}>
-        <div className={styles['table-header']}>
-          <div className={styles['header-left']}>
-            {leftColumns.map((headItem) => {
-              return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
-            })}
-          </div>
-          <div
-            ref={headerScrollRef}
-            onScroll={() =>
-              handleScroll({
-                sourceRef: headerScrollRef,
-                firstTargetRef: bodyScrollRef,
-                secondTargetRef: footerScrollRef,
-              })
-            }
-            className={styles['header-mid']}
-          >
-            {data.tagsForHeader.map((tag) => (
-              <TableHead key={tag.order} item={String(tag.order + 1)} tagColor={tag.color} className={String(tag.id)} />
-            ))}
-          </div>
-          <div className={styles['header-right']}>
-            {rightColumns.map((headItem) => {
-              return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
-            })}
-          </div>
-        </div>
-        <div className={styles['table-viewport']}>
-          <div className={styles['table-body']}>
-            <div className={styles['body-left']}>
-              {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-                return <TableRow key={tableRowItem.id} data={tableRowItem} columns={leftColumns} />;
+    <>
+      <div className={styles['table-container']}>
+        <div className={styles['table']}>
+          <div className={styles['table-header']}>
+            <div className={styles['header-left']}>
+              {leftColumns.map((headItem) => {
+                return <TableHead key={headItem.id} item={headItem.title} className={headItem.id} />;
               })}
             </div>
             <div
-              ref={bodyScrollRef}
+              ref={headerScrollRef}
               onScroll={() =>
                 handleScroll({
-                  sourceRef: bodyScrollRef,
-                  firstTargetRef: headerScrollRef,
+                  sourceRef: headerScrollRef,
+                  firstTargetRef: bodyScrollRef,
                   secondTargetRef: footerScrollRef,
                 })
               }
-              className={styles['body-mid']}
+              className={styles['header-mid']}
             >
-              {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-                return <TableRow key={tableRowItem.id} data={tableRowItem} columns={dynamicColumns} />;
+              {data.tagsForHeader.map((tag) => (
+                <TableHead
+                  key={tag.order}
+                  item={String(tag.order + 1)}
+                  tagColor={tag.color}
+                  className={String(tag.id)}
+                />
+              ))}
+            </div>
+            <div className={styles['header-right']}>
+              {rightColumns.map((headItem) => {
+                return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
               })}
             </div>
-            <div className={styles['body-right']}>
-              {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-                return <TableRow key={tableRowItem.id} data={tableRowItem} columns={rightColumns} />;
-              })}
+          </div>
+          <div className={styles['table-viewport']}>
+            <div className={styles['table-body']}>
+              <div className={styles['body-left']}>
+                {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
+                  return <TableRow key={tableRowItem.id} data={tableRowItem} columns={leftColumns} />;
+                })}
+              </div>
+              <div
+                ref={bodyScrollRef}
+                onScroll={() =>
+                  handleScroll({
+                    sourceRef: bodyScrollRef,
+                    firstTargetRef: headerScrollRef,
+                    secondTargetRef: footerScrollRef,
+                  })
+                }
+                className={styles['body-mid']}
+              >
+                {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
+                  return (
+                    <TableRow
+                      key={tableRowItem.id}
+                      data={tableRowItem}
+                      columns={dynamicColumns}
+                      getCellBackground={getCellBackground}
+                    />
+                  );
+                })}
+              </div>
+              <div className={styles['body-right']}>
+                {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
+                  return (
+                    <TableRow
+                      key={tableRowItem.id}
+                      data={tableRowItem}
+                      columns={rightColumns}
+                      getCellBackground={getCellBackground}
+                    />
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
-        <div className={styles['table-footer']}>
-          <div className={styles['footer-left']}>
-            <TableFooter value="All documents" className="documents" />
-          </div>
-          <div
-            ref={footerScrollRef}
-            onScroll={() =>
-              handleScroll({
-                sourceRef: footerScrollRef,
-                firstTargetRef: headerScrollRef,
-                secondTargetRef: bodyScrollRef,
-              })
-            }
-            className={styles['footer-mid']}
-          >
-            {tagsForHeader.map((tag) => (
-              <TableFooter key={tag.order} value={allExcerptSums[tag.order]} className="tag" />
-            ))}
-          </div>
-          <div className={styles['footer-right']}>
-            {rightColumns.map((column) => (
-              <TableFooter
-                key={column.id}
-                value={column.dataIndex === 'allTags' ? allTagsSum : ''}
-                className={column.id}
-              />
-            ))}
+          <div className={styles['table-footer']}>
+            <div className={styles['footer-left']}>
+              <TableFooter value="All documents" className="documents" />
+            </div>
+            <div
+              ref={footerScrollRef}
+              onScroll={() =>
+                handleScroll({
+                  sourceRef: footerScrollRef,
+                  firstTargetRef: headerScrollRef,
+                  secondTargetRef: bodyScrollRef,
+                })
+              }
+              className={styles['footer-mid']}
+            >
+              {tagsForHeader.map((tag) => {
+                return (
+                  <TableFooter
+                    key={tag.order}
+                    value={allExcerptSums[tag.order]}
+                    className="tag"
+                    isTableTag
+                    getCellBackground={getCellBackground}
+                  />
+                );
+              })}
+            </div>
+            <div className={styles['footer-right']}>
+              {rightColumns.map((column) => (
+                <TableFooter
+                  key={column.id}
+                  value={column.id === 'allTags' ? allTagsSum : null}
+                  className={column.id}
+                  isTableTag
+                  getCellBackground={getCellBackground}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

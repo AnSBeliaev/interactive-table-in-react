@@ -1,10 +1,7 @@
 :root {
   --text: #6b6375;
-  --head-text: #000;
-  --td-dark-bg: #EDF2F7;
-  --td-light-bg: #F8FAFC;
-  --table-tag-bg: #fff;
-  --border: #e4e8ec;
+  --full-tag-bg-color: #66b8ee;
+  --dark-text: #292624;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -32,6 +29,24 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+[data-theme='light'] {
+  --td-dark-bg: #EDF2F7;
+  --td-light-bg: #F8FAFC;
+  --border: #e4e8ec;
+  --table-tag-bg: #fff;
+  --cell-text: #292624;
+  --head-cell-text: #738296;
+}
+
+[data-theme='dark'] {
+  --td-dark-bg: #3e454c;
+  --td-light-bg: #3f454d;
+  --border: #3e444c;
+  --table-tag-bg: #282e34;
+  --cell-text: #e2e6eb;
+  --head-cell-text: #b3bfcc;
 }
 
 body {
