@@ -59,6 +59,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
   }, [normalizedDocuments]);
 
   const getCellBackground = createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt });
+  const rowIds = useMemo(() => normalizedDocuments?.map((document) => document.id), [normalizedDocuments]);
 
   return (
     <>
@@ -121,6 +122,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                       data={tableRowItem}
                       columns={dynamicColumns}
                       getCellBackground={getCellBackground}
+                      rowIds={rowIds}
                     />
                   );
                 })}

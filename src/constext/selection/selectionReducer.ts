@@ -13,6 +13,10 @@ export const selectionReducer = (selectedIds: Set<string>, action: SelectionActi
       newSelectedIds.delete(action.id);
       return newSelectedIds;
     }
+    case 'set': {
+      const newSelectedIds = new Set(action.ids);
+      return newSelectedIds;
+    }
     default: {
       throw Error(`Unknown action: ${actionType}`);
     }

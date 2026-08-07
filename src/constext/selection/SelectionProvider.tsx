@@ -1,4 +1,4 @@
-import { useReducer, type ReactNode } from 'react';
+import { useReducer, useState, type ReactNode } from 'react';
 import { SelectionContext } from './SelectionContext';
 import { selectionReducer } from './selectionReducer';
 
@@ -9,6 +9,11 @@ type SelectionProviderProps = {
 export const SelectionProvider = ({ children }: SelectionProviderProps) => {
   const initialSelectedIds = new Set<string>();
   const [selectedIds, dispatch] = useReducer(selectionReducer, initialSelectedIds);
-  console.log('selectedIds: >>>', selectedIds);
-  return <SelectionContext.Provider value={{ selectedIds, dispatch }}>{children}</SelectionContext.Provider>;
+  const [anchorId, setAnchorId] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
+  return (
+    <SelectionContext.Provider value={{ selectedIds, dispatch, anchorId, setAnchorId, isDragging, setIsDragging }}>
+      {children}
+    </SelectionContext.Provider>
+  );
 };
