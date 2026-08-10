@@ -1,7 +1,7 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react';
 
 export type SelectionAction =
-  { type: 'add'; id: string } | { type: 'remove'; id: string } | { type: 'set'; ids: Set<string> };
+  { type: 'add'; id: string } | { type: 'remove'; id: string } | { type: 'set'; ids: Set<string> } | { type: 'clear' };
 
 type SelectionContextValue = {
   anchorId: string;

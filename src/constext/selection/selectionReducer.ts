@@ -17,6 +17,10 @@ export const selectionReducer = (selectedIds: Set<string>, action: SelectionActi
       const newSelectedIds = new Set(action.ids);
       return newSelectedIds;
     }
+    case 'clear': {
+      const newSelectedIds = new Set<string>();
+      return newSelectedIds;
+    }
     default: {
       throw Error(`Unknown action: ${actionType}`);
     }

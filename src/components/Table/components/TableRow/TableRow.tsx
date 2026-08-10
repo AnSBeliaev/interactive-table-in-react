@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useSelection } from '../../../../constext';
 import type { TableColumn, TableRowItem } from '../../types';
 import styles from './TableRow.module.css';
@@ -11,31 +12,19 @@ type TableRowProps<T> = {
 
 export const TableRow = <T extends TableRowItem>({ data, columns, getCellBackground, rowIds }: TableRowProps<T>) => {
   const { selectedIds, dispatch, setAnchorId, anchorId, isDragging, setIsDragging } = useSelection();
-
-  const handleCellClick = (cellId: string) => {
-    dispatch({
-      type: 'add',
-      id: cellId,
-    });
-    if (selectedIds.has(cellId)) {
-      dispatch({
-        type: 'remove',
-        id: cellId,
-      });
-    }
-  };
-
+  const didDragRef = useRef(false);
   const columnIds = columns.filter((column) => typeof column === 'number');
 
   type GetCellIdsInRangeArgs = { anchorId: string; currentId: string; rowIds?: number[]; columnIds: number[] };
 
   const getCellIdsInRange = ({ anchorId, currentId, rowIds, columnIds }: GetCellIdsInRangeArgs) => {
     if (!rowIds) return;
-    const sep = anchorId.lastIndexOf('-');
-    const anchorColumnId = anchorId.slice(0, sep);
-    const anchorRowId = anchorId.slice(sep + 1);
-    const currentColumnId = currentId.slice(0, sep);
-    const currentRowId = currentId.slice(sep + 1);
+    const anchorSep = anchorId.lastIndexOf('-');
+    const currentSep = currentId.lastIndexOf('-');
+    const anchorColumnId = anchorId.slice(0, anchorSep);
+    const anchorRowId = anchorId.slice(anchorSep + 1);
+    const currentColumnId = currentId.slice(0, currentSep);
+    const currentRowId = currentId.slice(currentSep + 1);
     const selectedIdsSet = new Set<string>();
 
     const r1 = rowIds.indexOf(Number(anchorRowId));
@@ -47,26 +36,62 @@ export const TableRow = <T extends TableRowItem>({ data, columns, getCellBackgro
         selectedIdsSet.add(`${columnIds[c]}-${rowIds[r]}`);
       }
     }
-
     dispatch({
       type: 'set',
       ids: selectedIdsSet,
     });
   };
 
-  const handleMouseDown = (currentId: string) => {
+  const handleCellClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => {
+    if (!cellId) return;
+    if (didDragRef.current) {
+      didDragRef.current = false;
+      return;
+    }
+
+    if (event.shiftKey && anchorId) {
+      getCellIdsInRange({ anchorId, currentId: cellId, rowIds, columnIds });
+      return;
+    }
+
+    if (event.ctrlKey || event.metaKey) {
+      if (selectedIds.has(cellId)) {
+        dispatch({ type: 'remove', id: cellId });
+      } else {
+        dispatch({ type: 'add', id: cellId });
+      }
+      setAnchorId(cellId);
+      return;
+    }
+
+    if (selectedIds.has(cellId) && selectedIds.size === 1) {
+      dispatch({ type: 'remove', id: cellId });
+    } else if (selectedIds.has(cellId) && selectedIds.size > 1) {
+      dispatch({ type: 'clear' });
+      dispatch({ type: 'add', id: cellId });
+    } else {
+      dispatch({ type: 'clear' });
+      dispatch({ type: 'add', id: cellId });
+    }
+    setAnchorId(cellId);
+  };
+
+  const handleMouseDown = (event: React.MouseEvent, currentId: string) => {
+    if (!currentId || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    didDragRef.current = false;
     setAnchorId(currentId);
     setIsDragging(true);
   };
 
   const handleMouseUp = () => {
+    didDragRef.current = false;
     setIsDragging(false);
   };
 
   const handleMouseMove = (currentId: string) => {
-    if (isDragging) {
-      getCellIdsInRange({ anchorId, currentId, rowIds, columnIds });
-    }
+    if (!isDragging || !anchorId || !currentId) return;
+    didDragRef.current = true;
+    getCellIdsInRange({ anchorId, currentId, rowIds, columnIds });
   };
   return (
     <div className={styles['table-row']}>
@@ -92,8 +117,8 @@ export const TableRow = <T extends TableRowItem>({ data, columns, getCellBackgro
             className={`${styles[`table-cell-${isTag ? 'tag' : column.id}`]} ${
               selectedIds.has(cellId) ? styles['table-cell-selected-tag'] : ''
             }`}
-            onClick={() => handleCellClick(cellId)}
-            onMouseDown={() => handleMouseDown(cellId)}
+            onClick={(event) => handleCellClick(event, cellId)}
+            onMouseDown={(event) => handleMouseDown(event, cellId)}
             onMouseUp={handleMouseUp}
             onMouseMove={() => handleMouseMove(cellId)}
           >
@@ -103,7 +128,7 @@ export const TableRow = <T extends TableRowItem>({ data, columns, getCellBackgro
                 backgroundColor: `${getCellBackground ? `${getCellBackground({ value: String(value) })}` : ''}`,
               }}
             >
-              {value ? String(value) : ''}
+              <p>{value ? String(value) : ''}</p>
             </div>
           </div>
         );

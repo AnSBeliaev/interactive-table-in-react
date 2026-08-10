@@ -92,7 +92,7 @@
 .header-mid,
 .body-mid,
 .footer-mid {
-  flex: 1 0 0;
+  flex: 1 0 300px;
   min-width: 0;
   overflow-x: auto;
 }

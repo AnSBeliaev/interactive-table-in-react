@@ -43,7 +43,6 @@
     white-space: nowrap;
     border: 1px solid var(--border);
     background-color: var(--table-tag-bg);
-    user-select: none;
 }
 
 .table-cell-selected-tag {
@@ -88,4 +87,8 @@
     font-weight: 700;
     color: var(--cell-text);
     cursor: default;
+}
+
+.inner-table-cell p {
+    user-select: none;
 }

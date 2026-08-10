@@ -46,7 +46,6 @@ const rgbToCss = ({ r, g, b }: Rgb) => `rgb(${r}, ${g}, ${b})`;
 
 const getHeatColors = () => {
   const styles = getComputedStyle(document.documentElement);
-  console.log('styles: >>>', styles);
   const minHex = styles.getPropertyValue('--tag-heat-min-color').trim() || '#f3f9fd';
   const maxHex = styles.getPropertyValue('--full-tag-bg-color').trim() || '#66b8ee';
 
