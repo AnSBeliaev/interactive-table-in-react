@@ -3,6 +3,6 @@ import { SelectionContext } from './SelectionContext';
 
 export const useSelection = () => {
   const ctx = useContext(SelectionContext);
-  if (!ctx) throw new Error('useSelection must be used within SelectionProvider');
+  if (!ctx) throw new Error('useSelection должен использоваться внутри SelectionProvider');
   return ctx;
 };

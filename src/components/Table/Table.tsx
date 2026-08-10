@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { TableRow, TableHead, TableFooter } from './components';
 import { useNormalizeDocuments, useSyncScroll } from './hooks';
+import { useTheme } from '../../constext';
 
 import styles from './Table.module.css';
 
@@ -15,6 +16,7 @@ type TableProps<T> = {
 };
 
 export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowItem>) => {
+  const { isDark } = useTheme();
   const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
 
   const { documents, tagsForHeader } = data;
@@ -58,7 +60,10 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     return { minAllExcerpt, maxAllExcerpt };
   }, [normalizedDocuments]);
 
-  const getCellBackground = createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt });
+  const getCellBackground = useMemo(
+    () => createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt }),
+    [minAllExcerpt, maxAllExcerpt, isDark],
+  );
   const rowIds = useMemo(() => normalizedDocuments?.map((document) => document.id), [normalizedDocuments]);
 
   return (
