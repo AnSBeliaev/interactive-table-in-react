@@ -9,7 +9,7 @@ export type Tag = {
 export type TableRowItem = {
   id: number;
   name: string | null;
-  groupName: string | null;
+  groupName: string[] | string | null;
   groupNameStr: string | null;
   notes: string;
   number: string | null;
