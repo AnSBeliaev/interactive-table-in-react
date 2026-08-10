@@ -1,13 +1,14 @@
-import { useMemo } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { TableRow, TableHead, TableFooter } from './components';
 import { useNormalizeDocuments, useSyncScroll } from './hooks';
-import { useTheme } from '../../constext';
+import { useSelection, useTheme } from '../../constext';
 
 import styles from './Table.module.css';
 
 import type { ColumnItem, TableRowItem, TableData } from './types';
 import { createGetCellBackground } from './helpers';
+import { getCellIdsInRange } from './components/TableRow/helpers';
 
 type TableProps<T> = {
   data: TableData<T>;
@@ -15,16 +16,18 @@ type TableProps<T> = {
   rightColumns: ColumnItem<T>[];
 };
 
+const EMPTY_SELECTED_CELL_IDS: ReadonlySet<string> = new Set();
+
 export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowItem>) => {
   const { isDark } = useTheme();
   const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
 
+  const { selectedIds, dispatch, setAnchorId, anchorId, isDragging, setIsDragging } = useSelection();
+
   const { documents, tagsForHeader } = data;
   const normalizedDocuments = useNormalizeDocuments({ documents });
 
-  const dynamicColumns = tagsForHeader.map((tag) => {
-    return tag.order;
-  });
+  const dynamicColumns = useMemo(() => tagsForHeader.map((tag) => tag.order), [tagsForHeader]);
 
   const allExcerptSums: Record<number, number> = {};
 
@@ -65,6 +68,116 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     [minAllExcerpt, maxAllExcerpt, isDark],
   );
   const rowIds = useMemo(() => normalizedDocuments?.map((document) => document.id), [normalizedDocuments]);
+
+  const columnIds = useMemo(() => dynamicColumns.filter((column) => typeof column === 'number'), [dynamicColumns]);
+
+  const selectedIdsRef = useRef(selectedIds);
+  const anchorIdRef = useRef(anchorId);
+  const isDraggingRef = useRef(isDragging);
+  const rowIdsRef = useRef(rowIds);
+  const columnIdsRef = useRef(columnIds);
+  const didDragRef = useRef(false);
+
+  useLayoutEffect(() => {
+    selectedIdsRef.current = selectedIds;
+    anchorIdRef.current = anchorId;
+    isDraggingRef.current = isDragging;
+    rowIdsRef.current = rowIds;
+    columnIdsRef.current = columnIds;
+  }, [selectedIds, anchorId, isDragging, rowIds, columnIds]);
+
+  const handleCellClick = useCallback(
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => {
+      const currentSelectedIds = selectedIdsRef.current;
+      const currentAnchorId = anchorIdRef.current;
+      const currentRowIds = rowIdsRef.current;
+      const currentColumnIds = columnIdsRef.current;
+
+      if (!cellId) return;
+      if (!currentSelectedIds || !dispatch || !setAnchorId) return;
+      if (didDragRef.current) {
+        didDragRef.current = false;
+        return;
+      }
+
+      if (event.shiftKey && currentAnchorId) {
+        getCellIdsInRange({
+          anchorId: currentAnchorId,
+          currentId: cellId,
+          rowIds: currentRowIds,
+          columnIds: currentColumnIds,
+          dispatch,
+        });
+        return;
+      }
+
+      if (event.ctrlKey || event.metaKey) {
+        if (currentSelectedIds.has(cellId)) {
+          dispatch({ type: 'remove', id: cellId });
+        } else {
+          dispatch({ type: 'add', id: cellId });
+        }
+        setAnchorId(cellId);
+        return;
+      }
+
+      if (currentSelectedIds.has(cellId) && currentSelectedIds.size === 1) {
+        dispatch({ type: 'remove', id: cellId });
+      } else if (currentSelectedIds.has(cellId) && currentSelectedIds.size > 1) {
+        dispatch({ type: 'clear' });
+        dispatch({ type: 'add', id: cellId });
+      } else {
+        dispatch({ type: 'clear' });
+        dispatch({ type: 'add', id: cellId });
+      }
+      setAnchorId(cellId);
+    },
+    [dispatch, setAnchorId],
+  );
+
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent, currentId: string) => {
+      if (!currentId || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      didDragRef.current = false;
+      setAnchorId(currentId);
+      setIsDragging(true);
+    },
+    [setAnchorId, setIsDragging],
+  );
+
+  const handleMouseUp = useCallback(() => {
+    didDragRef.current = false;
+    setIsDragging(false);
+  }, [setIsDragging]);
+
+  const handleMouseMove = useCallback(
+    (currentId: string) => {
+      if (!isDraggingRef.current || !anchorIdRef.current || !currentId) return;
+      didDragRef.current = true;
+      getCellIdsInRange({
+        anchorId: anchorIdRef.current,
+        currentId,
+        rowIds: rowIdsRef.current,
+        columnIds: columnIdsRef.current,
+        dispatch,
+      });
+    },
+    [dispatch],
+  );
+
+  const selectedCellIdsByRow = useMemo(() => {
+    const byRow = new Map<number, Set<string>>();
+    selectedIds.forEach((cellId) => {
+      const sep = cellId.lastIndexOf('-');
+      if (sep === -1) return;
+      const rowId = Number(cellId.slice(sep + 1));
+      if (!Number.isFinite(rowId)) return;
+      const rowSet = byRow.get(rowId) ?? new Set<string>();
+      rowSet.add(cellId);
+      byRow.set(rowId, rowSet);
+    });
+    return byRow;
+  }, [selectedIds]);
 
   return (
     <>
@@ -127,7 +240,11 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                       data={tableRowItem}
                       columns={dynamicColumns}
                       getCellBackground={getCellBackground}
-                      rowIds={rowIds}
+                      handleCellClick={handleCellClick}
+                      handleMouseMove={handleMouseMove}
+                      handleMouseDown={handleMouseDown}
+                      handleMouseUp={handleMouseUp}
+                      selectedCellIds={selectedCellIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
                     />
                   );
                 })}

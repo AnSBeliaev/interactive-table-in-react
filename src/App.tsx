@@ -8,12 +8,12 @@ import { SelectionProvider } from './constext/selection/SelectionProvider';
 function App() {
   return (
     <>
-      <SelectionProvider>
-        <ThemeProvider>
-          <ToggleSwitch />
+      <ThemeProvider>
+        <ToggleSwitch />
+        <SelectionProvider>
           <Table data={mockData.data} leftColumns={STATIC_LEFT_COLUMNS} rightColumns={STATIC_RIGHT_COLUMNS} />
-        </ThemeProvider>
-      </SelectionProvider>
+        </SelectionProvider>
+      </ThemeProvider>
     </>
   );
 }
