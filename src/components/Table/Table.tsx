@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { TableRow, TableHead, TableFooter } from './components';
 import { useGetMinAndMaxExcerpt, useGetSelectedIdsByRow, useNormalizeDocuments, useSyncScroll } from './hooks';
@@ -51,7 +51,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
   const { minAllExcerpt, maxAllExcerpt } = useGetMinAndMaxExcerpt(normalizedDocuments);
 
   const getCellBackground = useMemo(
-    () => createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt }),
+    () => createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt, isDark }),
     [minAllExcerpt, maxAllExcerpt, isDark],
   );
   const rowIds = useMemo(() => normalizedDocuments?.map((document) => document.id), [normalizedDocuments]);
@@ -122,24 +122,35 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     [dispatch, setAnchorId],
   );
 
+  const endDrag = useCallback(() => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    setIsDragging(false);
+  }, [setIsDragging]);
+
+  useEffect(() => {
+    window.addEventListener('mouseup', endDrag);
+    return () => window.removeEventListener('mouseup', endDrag);
+  }, [endDrag]);
+
   const handleMouseDown = useCallback(
     (event: React.MouseEvent, currentId: string) => {
       if (!currentId || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      event.preventDefault();
       didDragRef.current = false;
+      anchorIdRef.current = currentId;
+      isDraggingRef.current = true;
       setAnchorId(currentId);
       setIsDragging(true);
     },
     [setAnchorId, setIsDragging],
   );
 
-  const handleMouseUp = useCallback(() => {
-    didDragRef.current = false;
-    setIsDragging(false);
-  }, [setIsDragging]);
-
   const handleMouseMove = useCallback(
     (currentId: string) => {
-      if (!isDraggingRef.current || !anchorIdRef.current || !currentId) return;
+      if (!isDraggingRef.current || !anchorIdRef.current || !currentId) {
+        return;
+      }
       didDragRef.current = true;
       getCellIdsInRange({
         anchorId: anchorIdRef.current,
@@ -218,7 +229,6 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                       handleCellClick={handleCellClick}
                       handleMouseMove={handleMouseMove}
                       handleMouseDown={handleMouseDown}
-                      handleMouseUp={handleMouseUp}
                       selectedCellIds={selectedCellIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
                     />
                   );

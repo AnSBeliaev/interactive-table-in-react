@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import type { TableColumn, TableRowItem } from '../../types';
 import styles from './TableRow.module.css';
-import { throttle } from './helpers';
 
 type TableRowProps<T> = {
   data: T;
@@ -9,7 +8,6 @@ type TableRowProps<T> = {
   getCellBackground?: ({ value }: { value: string }) => string;
   handleCellClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => void;
   handleMouseDown?: (event: React.MouseEvent<Element, MouseEvent>, currentId: string) => void;
-  handleMouseUp?: () => void;
   handleMouseMove?: (currentId: string) => void;
   selectedCellIds?: ReadonlySet<string>;
 };
@@ -21,12 +19,9 @@ export const TableRow = memo(
     getCellBackground,
     handleCellClick,
     handleMouseDown,
-    handleMouseUp,
     handleMouseMove,
     selectedCellIds,
   }: TableRowProps<T>) => {
-    const throttledMouseMove = throttle(handleMouseMove ? handleMouseMove : () => {}, 200);
-
     return (
       <div className={styles['table-row']}>
         {columns.map((column) => {
@@ -53,8 +48,7 @@ export const TableRow = memo(
               }`}
               onClick={(event) => handleCellClick?.(event, cellId)}
               onMouseDown={(event) => handleMouseDown?.(event, cellId)}
-              onMouseUp={handleMouseUp}
-              onMouseMove={() => throttledMouseMove(cellId)}
+              onMouseMove={() => handleMouseMove?.(cellId)}
             >
               <div
                 className={styles[`${hasInnerBackground ? 'inner-table-cell' : ''}`]}

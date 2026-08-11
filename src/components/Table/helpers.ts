@@ -58,6 +58,7 @@ const getHeatColors = () => {
 type CreateGetCellBackgroundArgs = {
   min: number | null;
   max: number | null;
+  isDark?: boolean;
 };
 
 export const createGetCellBackground = ({ min, max }: CreateGetCellBackgroundArgs) => {
