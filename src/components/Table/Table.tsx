@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { TableRow, TableHead, TableFooter } from './components';
-import { useGetSelectedIdsByRow, useNormalizeDocuments, useSyncScroll } from './hooks';
+import { useGetMinAndMaxExcerpt, useGetSelectedIdsByRow, useNormalizeDocuments, useSyncScroll } from './hooks';
 import { useSelection, useTheme } from '../../constext';
 
 import styles from './Table.module.css';
@@ -48,20 +48,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     return sum;
   }, [normalizedDocuments]);
 
-  const { minAllExcerpt, maxAllExcerpt } = useMemo(() => {
-    let minAllExcerpt: number | null = null;
-    let maxAllExcerpt: number | null = null;
-    normalizedDocuments.forEach((document) => {
-      if (!document.tagsByOrder) return;
-      document.tagsByOrder.forEach((tag) => {
-        if (minAllExcerpt == null) minAllExcerpt = Number(tag.allExcerpt);
-        if (maxAllExcerpt == null) maxAllExcerpt = Number(tag.allExcerpt);
-        if (Number(tag.allExcerpt) < minAllExcerpt) minAllExcerpt = Number(tag.allExcerpt);
-        if (Number(tag.allExcerpt) > maxAllExcerpt) maxAllExcerpt = Number(tag.allExcerpt);
-      });
-    });
-    return { minAllExcerpt, maxAllExcerpt };
-  }, [normalizedDocuments]);
+  const { minAllExcerpt, maxAllExcerpt } = useGetMinAndMaxExcerpt(normalizedDocuments);
 
   const getCellBackground = useMemo(
     () => createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt }),
