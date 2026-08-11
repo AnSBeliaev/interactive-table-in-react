@@ -26,6 +26,7 @@ export const TableRow = memo(
     selectedCellIds,
   }: TableRowProps<T>) => {
     const throttledMouseMove = throttle(handleMouseMove ? handleMouseMove : () => {}, 200);
+
     return (
       <div className={styles['table-row']}>
         {columns.map((column) => {

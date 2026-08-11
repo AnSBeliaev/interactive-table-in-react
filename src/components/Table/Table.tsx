@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { TableRow, TableHead, TableFooter } from './components';
-import { useNormalizeDocuments, useSyncScroll } from './hooks';
+import { useGetSelectedIdsByRow, useNormalizeDocuments, useSyncScroll } from './hooks';
 import { useSelection, useTheme } from '../../constext';
 
 import styles from './Table.module.css';
@@ -165,19 +165,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     [dispatch],
   );
 
-  const selectedCellIdsByRow = useMemo(() => {
-    const byRow = new Map<number, Set<string>>();
-    selectedIds.forEach((cellId) => {
-      const sep = cellId.lastIndexOf('-');
-      if (sep === -1) return;
-      const rowId = Number(cellId.slice(sep + 1));
-      if (!Number.isFinite(rowId)) return;
-      const rowSet = byRow.get(rowId) ?? new Set<string>();
-      rowSet.add(cellId);
-      byRow.set(rowId, rowSet);
-    });
-    return byRow;
-  }, [selectedIds]);
+  const selectedCellIdsByRow = useGetSelectedIdsByRow(selectedIds);
 
   return (
     <>
