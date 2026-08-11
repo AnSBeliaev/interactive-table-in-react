@@ -8,7 +8,7 @@ import styles from './Table.module.css';
 
 import type { ColumnItem, TableRowItem, TableData } from './types';
 import { createGetCellBackground } from './helpers';
-import { getCellIdsInRange } from './components/TableRow/helpers';
+import { getCellIdsInRange, getNextAnchorId } from './components/TableRow/helpers';
 
 type TableProps<T> = {
   data: TableData<T>;
@@ -77,7 +77,6 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
 
   const applyCellClickSelection = useCallback(
     (cellId: string, shiftKey: boolean) => {
-      const currentSelectedIds = selectedIdsRef.current;
       const currentAnchorId = anchorIdRef.current;
       const currentRowIds = rowIdsRef.current;
       const currentColumnIds = columnIdsRef.current;
@@ -95,15 +94,8 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
         return;
       }
 
-      if (currentSelectedIds.has(cellId) && currentSelectedIds.size === 1) {
-        dispatch({ type: 'remove', id: cellId });
-      } else if (currentSelectedIds.has(cellId) && currentSelectedIds.size > 1) {
-        dispatch({ type: 'clear' });
-        dispatch({ type: 'add', id: cellId });
-      } else {
-        dispatch({ type: 'clear' });
-        dispatch({ type: 'add', id: cellId });
-      }
+      dispatch({ type: 'clear' });
+      dispatch({ type: 'add', id: cellId });
       setAnchorId(cellId);
       anchorIdRef.current = cellId;
     },
@@ -117,12 +109,24 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
 
       const currentSelectedIds = selectedIdsRef.current;
       if (currentSelectedIds.has(cellId)) {
-        dispatch({ type: 'remove', id: cellId });
+        const isAnchor = anchorIdRef.current === cellId;
+
+        if (isAnchor && currentSelectedIds.size <= 1) return;
+
+        const nextIds = new Set(currentSelectedIds);
+        nextIds.delete(cellId);
+        dispatch({ type: 'set', ids: nextIds });
+
+        if (isAnchor) {
+          const nextAnchorId = getNextAnchorId(nextIds, rowIdsRef.current ?? [], columnIdsRef.current ?? []);
+          anchorIdRef.current = nextAnchorId;
+          setAnchorId(nextAnchorId);
+        }
       } else {
         dispatch({ type: 'add', id: cellId });
+        anchorIdRef.current = cellId;
+        setAnchorId(cellId);
       }
-      setAnchorId(cellId);
-      anchorIdRef.current = cellId;
     },
     [dispatch, setAnchorId],
   );
@@ -142,7 +146,12 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
       const isRowFullySelected = idsForThisRowArr.every((id) => selectedIdsNow.has(id));
 
       if (event.ctrlKey || event.metaKey) {
+        const currentAnchorId = anchorIdRef.current;
+        const rowHasAnchor = Boolean(currentAnchorId && idsForThisRowSet.has(currentAnchorId));
+
         if (isRowFullySelected) {
+          if (rowHasAnchor) return;
+
           const nextIds = new Set(selectedIdsNow);
           idsForThisRowArr.forEach((id) => nextIds.delete(id));
           dispatch({ type: 'set', ids: nextIds });
@@ -150,12 +159,11 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           const nextIds = new Set(selectedIdsNow);
           idsForThisRowArr.forEach((id) => nextIds.add(id));
           dispatch({ type: 'set', ids: nextIds });
-        }
 
-        const firstOrder = orders[0];
-        const nextAnchorId = `${firstOrder}-${numericRowId}`;
-        anchorIdRef.current = nextAnchorId;
-        setAnchorId(nextAnchorId);
+          const nextAnchorId = `${orders[0]}-${numericRowId}`;
+          anchorIdRef.current = nextAnchorId;
+          setAnchorId(nextAnchorId);
+        }
         return;
       }
 
@@ -186,17 +194,11 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           }
         }
 
-        const nextIds = new Set(selectedIdsRef.current);
-        rangeIds.forEach((id) => nextIds.add(id));
-        dispatch({ type: 'set', ids: nextIds });
+        dispatch({ type: 'set', ids: rangeIds });
         return;
       }
 
-      if (isRowFullySelected && selectedIdsNow.size === idsForThisRowSet.size) {
-        dispatch({ type: 'clear' });
-      } else {
-        dispatch({ type: 'set', ids: idsForThisRowSet });
-      }
+      dispatch({ type: 'set', ids: idsForThisRowSet });
 
       const nextAnchorId = `${orders[0]}-${numericRowId}`;
       anchorIdRef.current = nextAnchorId;

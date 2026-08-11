@@ -32,3 +32,28 @@ export const getCellIdsInRange = ({ anchorId, currentId, rowIds, columnIds, disp
     ids: selectedIdsSet,
   });
 };
+
+export const getNextAnchorId = (remainingIds: Set<string>, rowIds: number[] = [], columnIds: number[] = []): string => {
+  if (remainingIds.size === 0) return '';
+
+  let best: { rowIndex: number; columnIndex: number; id: string } | null = null;
+
+  for (const id of remainingIds) {
+    const sep = id.lastIndexOf('-');
+    if (sep === -1) continue;
+
+    const order = Number(id.slice(0, sep));
+    const rowId = Number(id.slice(sep + 1));
+    if (!Number.isFinite(order) || !Number.isFinite(rowId)) continue;
+
+    const rowIndex = rowIds.indexOf(rowId);
+    const columnIndex = columnIds.indexOf(order);
+    if (rowIndex === -1 || columnIndex === -1) continue;
+
+    if (!best || rowIndex < best.rowIndex || (rowIndex === best.rowIndex && columnIndex < best.columnIndex)) {
+      best = { rowIndex, columnIndex, id };
+    }
+  }
+
+  return best?.id ?? remainingIds.values().next().value ?? '';
+};
