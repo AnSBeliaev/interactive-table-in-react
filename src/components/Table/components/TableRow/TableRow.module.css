@@ -25,9 +25,12 @@
 
 .table-cell-name div {
     width: 90%;
+    text-align: left;
+}
+
+.table-cell-name div p {
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: left;
 }
 
 .table-cell-tag {
@@ -64,10 +67,25 @@
 }
 
 .table-cell-notes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     flex: 2;
     height: 60px;
     border: 1px solid var(--border);
     background-color: var(--table-tag-bg);
+    color: var(--cell-text);
+}
+
+.table-cell-notes div {
+    width: 90%;
+    text-align: left;
+}
+
+.table-cell-notes div p {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .table-row {

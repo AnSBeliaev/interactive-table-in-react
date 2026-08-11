@@ -29,7 +29,9 @@ export const TableRow = memo(
           if (typeof column === 'number') {
             cellId = `${column}-${data.id}`;
           }
-
+          if (typeof column !== 'number' && column.id === 'allTags') {
+            cellId = `${data.id}`;
+          }
           const isTag = typeof column === 'number';
           const hasInnerBackground = isTag || column.id === 'allTags';
 
@@ -46,7 +48,12 @@ export const TableRow = memo(
               className={`${styles[`table-cell-${isTag ? 'tag' : column.id}`]} ${
                 selectedCellIds?.has(cellId) ? styles['table-cell-selected-tag'] : ''
               }`}
-              onClick={(event) => handleCellClick?.(event, cellId)}
+              onClick={(event) => {
+                if (!handleCellClick) return;
+                if (typeof column !== 'number' && column.id !== 'allTags') return;
+                if (!cellId) return;
+                handleCellClick(event, cellId);
+              }}
               onMouseDown={(event) => handleMouseDown?.(event, cellId)}
               onMouseMove={() => handleMouseMove?.(cellId)}
             >
