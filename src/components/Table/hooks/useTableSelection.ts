@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useSelection } from '../../../constext';
 import type { TableRowItem, Tag } from '../types';
 import { getCellIdsInRange, getNextAnchorId } from '../helpers';
@@ -164,6 +164,10 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
     [dispatch, setAnchorId],
   );
 
+  const handleFooterAlltagsCellClick = useCallback(() => {
+    dispatch({ type: 'clear' });
+  }, [dispatch]);
+
   const handleFooterCellClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>, columnOrder: string) => {
       const numericColumnOrder = Number(columnOrder);
@@ -291,5 +295,18 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
     [dispatch],
   );
 
-  return { endDrag, handleFooterCellClick, handleAllTagsCellClick, handleCellClick, handleMouseDown, handleMouseMove };
+  useEffect(() => {
+    window.addEventListener('mouseup', endDrag);
+    return () => window.removeEventListener('mouseup', endDrag);
+  }, [endDrag]);
+
+  return {
+    endDrag,
+    handleFooterCellClick,
+    handleAllTagsCellClick,
+    handleCellClick,
+    handleMouseDown,
+    handleMouseMove,
+    handleFooterAlltagsCellClick,
+  };
 };

@@ -6,7 +6,7 @@ type TableFooterProps = {
   columnId?: number;
   isTableTag?: boolean;
   getCellBackground?: ({ value }: { value: string }) => string;
-  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => void;
+  onClick?: ((event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => void) | null;
 };
 
 export const TableFooter = ({

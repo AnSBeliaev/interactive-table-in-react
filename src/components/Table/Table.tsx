@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { TableRow, TableHead, TableFooter } from './components';
 import {
@@ -59,16 +59,17 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     [minAllExcerpt, maxAllExcerpt, isDark],
   );
 
-  const { endDrag, handleFooterCellClick, handleAllTagsCellClick, handleCellClick, handleMouseDown, handleMouseMove } =
-    useTableSelection({
-      normalizedDocuments,
-      dynamicColumns,
-    });
-
-  useEffect(() => {
-    window.addEventListener('mouseup', endDrag);
-    return () => window.removeEventListener('mouseup', endDrag);
-  }, [endDrag]);
+  const {
+    handleFooterCellClick,
+    handleAllTagsCellClick,
+    handleCellClick,
+    handleMouseDown,
+    handleMouseMove,
+    handleFooterAlltagsCellClick,
+  } = useTableSelection({
+    normalizedDocuments,
+    dynamicColumns,
+  });
 
   const selectedCellIdsByRow = useGetSelectedIdsByRow(selectedIds);
 
@@ -190,6 +191,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 <TableFooter
                   key={column.id}
                   value={column.id === 'allTags' ? allTagsSum : null}
+                  onClick={column.id === 'allTags' ? handleFooterAlltagsCellClick : null}
                   className={column.id}
                   isTableTag
                   getCellBackground={getCellBackground}
