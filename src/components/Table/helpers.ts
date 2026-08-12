@@ -128,7 +128,11 @@ export const getCellIdsInRange = ({ anchorId, currentId, rowIds, columnIds, disp
   });
 };
 
-export const getNextAnchorId = (remainingIds: Set<string>, rowIds: number[] = [], columnIds: number[] = []): string => {
+export const getNextAnchorId = (
+  remainingIds: Set<string>,
+  rowIds: number[] = [],
+  columnIds: Array<string | number> = [],
+): string => {
   if (remainingIds.size === 0) return '';
 
   let best: { rowIndex: number; columnIndex: number; id: string } | null = null;
@@ -137,12 +141,12 @@ export const getNextAnchorId = (remainingIds: Set<string>, rowIds: number[] = []
     const sep = id.lastIndexOf('-');
     if (sep === -1) continue;
 
-    const order = Number(id.slice(0, sep));
+    const columnKey = id.slice(0, sep);
     const rowId = Number(id.slice(sep + 1));
-    if (!Number.isFinite(order) || !Number.isFinite(rowId)) continue;
+    if (!Number.isFinite(rowId)) continue;
 
     const rowIndex = rowIds.indexOf(rowId);
-    const columnIndex = columnIds.indexOf(order);
+    const columnIndex = columnIds.findIndex((column) => String(column) === columnKey);
     if (rowIndex === -1 || columnIndex === -1) continue;
 
     if (!best || rowIndex < best.rowIndex || (rowIndex === best.rowIndex && columnIndex < best.columnIndex)) {

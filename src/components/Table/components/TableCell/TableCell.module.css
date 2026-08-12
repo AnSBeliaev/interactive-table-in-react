@@ -1,0 +1,18 @@
+.inner-table-cell {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--cell-text);
+    cursor: default;
+}
+
+.inner-table-cell p {
+    user-select: none;
+}
+
+p {
+    user-select: none;
+}

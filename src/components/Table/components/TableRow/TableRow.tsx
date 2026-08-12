@@ -1,14 +1,15 @@
 import { memo } from 'react';
 import type { TableColumn, TableRowItem } from '../../types';
 import styles from './TableRow.module.css';
+import { TableCell } from '../TableCell';
 
 type TableRowProps<T> = {
   data: T;
   columns: TableColumn<T>[];
   getCellBackground?: ({ value }: { value: string }) => string;
   handleCellClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => void;
-  handleMouseDown?: (event: React.MouseEvent<Element, MouseEvent>, currentId: string) => void;
-  handleMouseMove?: (currentId: string) => void;
+  handleMouseDown?: (event: React.MouseEvent<Element, MouseEvent>, currentId?: string) => void;
+  handleMouseMove?: (currentId?: string) => void;
   selectedCellIds?: ReadonlySet<string>;
 };
 
@@ -25,15 +26,10 @@ export const TableRow = memo(
     return (
       <div className={styles['table-row']}>
         {columns.map((column) => {
-          let cellId = '';
-          if (typeof column === 'number') {
-            cellId = `${column}-${data.id}`;
-          }
-          if (typeof column !== 'number' && column.id === 'allTags') {
-            cellId = `${data.id}`;
-          }
+          const cellId =
+            typeof column === 'number' ? `${column}-${data.id}` : `${column.id}-${data.id}`;
           const isTag = typeof column === 'number';
-          const hasInnerBackground = isTag || column.id === 'allTags';
+          const hasInnerBackground = typeof column === 'number' || column.id === 'allTags';
 
           const value =
             typeof column !== 'number'
@@ -43,29 +39,18 @@ export const TableRow = memo(
               : data.tagsByOrder?.[column]?.allExcerpt;
 
           return (
-            <div
+            <TableCell
               key={isTag ? column : column.id}
-              className={`${styles[`table-cell-${isTag ? 'tag' : column.id}`]} ${
-                selectedCellIds?.has(cellId) ? styles['table-cell-selected-tag'] : ''
-              }`}
-              onClick={(event) => {
-                if (!handleCellClick) return;
-                if (typeof column !== 'number' && column.id !== 'allTags') return;
-                if (!cellId) return;
-                handleCellClick(event, cellId);
-              }}
-              onMouseDown={(event) => handleMouseDown?.(event, cellId)}
-              onMouseMove={() => handleMouseMove?.(cellId)}
-            >
-              <div
-                className={styles[`${hasInnerBackground ? 'inner-table-cell' : ''}`]}
-                style={{
-                  backgroundColor: `${getCellBackground ? `${getCellBackground({ value: String(value) })}` : ''}`,
-                }}
-              >
-                <p>{value ? String(value) : ''}</p>
-              </div>
-            </div>
+              value={value}
+              cellId={cellId}
+              column={column}
+              isSelected={Boolean(selectedCellIds?.has(cellId))}
+              handleMouseDown={handleMouseDown}
+              handleMouseMove={handleMouseMove}
+              getCellBackground={getCellBackground}
+              handleCellClick={handleCellClick}
+              hasInnerBackground={hasInnerBackground}
+            />
           );
         })}
       </div>

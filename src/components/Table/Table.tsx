@@ -59,6 +59,11 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     [minAllExcerpt, maxAllExcerpt, isDark],
   );
 
+  const columns = useMemo(
+    () => [...leftColumns, ...dynamicColumns, ...rightColumns],
+    [leftColumns, dynamicColumns, rightColumns],
+  );
+
   const {
     handleFooterCellClick,
     handleAllTagsCellClick,
@@ -68,7 +73,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     handleFooterAlltagsCellClick,
   } = useTableSelection({
     normalizedDocuments,
-    dynamicColumns,
+    columns,
   });
 
   const selectedCellIdsByRow = useGetSelectedIdsByRow(selectedIds);
@@ -113,7 +118,14 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             <div className={styles['table-body']}>
               <div className={styles['body-left']}>
                 {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-                  return <TableRow key={tableRowItem.id} data={tableRowItem} columns={leftColumns} />;
+                  return (
+                    <TableRow
+                      key={tableRowItem.id}
+                      data={tableRowItem}
+                      columns={leftColumns}
+                      selectedCellIds={selectedCellIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
+                    />
+                  );
                 })}
               </div>
               <div
@@ -151,6 +163,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                       data={tableRowItem}
                       columns={rightColumns}
                       getCellBackground={getCellBackground}
+                      selectedCellIds={selectedCellIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
                     />
                   );
                 })}

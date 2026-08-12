@@ -1,26 +1,34 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useSelection } from '../../../constext';
-import type { TableRowItem, Tag } from '../types';
+import type { ColumnItem, TableRowItem, Tag } from '../types';
 import { getCellIdsInRange, getNextAnchorId } from '../helpers';
 
-type UseTableSelectionArgs = {
+type UseTableSelectionArgs<T> = {
   normalizedDocuments: (TableRowItem & {
     tagsByOrder: Tag[];
   })[];
-  dynamicColumns: number[];
+  columns: (number | ColumnItem<T>)[];
 };
 
-export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTableSelectionArgs) => {
+export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableSelectionArgs<T>) => {
   const { selectedIds, dispatch, setAnchorId, anchorId, isDragging, setIsDragging } = useSelection();
 
   const rowIds = useMemo(() => normalizedDocuments?.map((document) => document.id), [normalizedDocuments]);
-  const columnIds = useMemo(() => dynamicColumns.filter((column) => typeof column === 'number'), [dynamicColumns]);
+  const columnIds = useMemo(
+    () => columns.map((column) => (typeof column === 'number' ? column : column.id)),
+    [columns],
+  );
+  const tagColumnIds = useMemo(
+    () => columns.filter((column): column is number => typeof column === 'number'),
+    [columns],
+  );
 
   const selectedIdsRef = useRef(selectedIds);
   const anchorIdRef = useRef(anchorId);
   const isDraggingRef = useRef(isDragging);
   const rowIdsRef = useRef(rowIds);
   const columnIdsRef = useRef(columnIds);
+  const tagColumnIdsRef = useRef(tagColumnIds);
   const didDragRef = useRef(false);
   const mouseDownCellIdRef = useRef('');
   const mouseDownShiftRef = useRef(false);
@@ -31,13 +39,14 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
     isDraggingRef.current = isDragging;
     rowIdsRef.current = rowIds;
     columnIdsRef.current = columnIds;
-  }, [selectedIds, anchorId, isDragging, rowIds, columnIds]);
+    tagColumnIdsRef.current = tagColumnIds;
+  }, [selectedIds, anchorId, isDragging, rowIds, columnIds, tagColumnIds]);
 
   const applyCellClickSelection = useCallback(
     (cellId: string, shiftKey: boolean) => {
       const currentAnchorId = anchorIdRef.current;
       const currentRowIds = rowIdsRef.current;
-      const currentColumnIds = columnIdsRef.current;
+      const currentTagColumnIds = tagColumnIdsRef.current;
 
       if (!cellId || !dispatch || !setAnchorId) return;
 
@@ -46,7 +55,7 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
           anchorId: currentAnchorId,
           currentId: cellId,
           rowIds: currentRowIds,
-          columnIds: currentColumnIds,
+          columnIds: currentTagColumnIds,
           dispatch,
         });
         return;
@@ -90,17 +99,18 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
   );
 
   const handleAllTagsCellClick = useCallback(
-    (event: React.MouseEvent<HTMLDivElement, MouseEvent>, rowId: string) => {
-      const numericRowId = Number(rowId);
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => {
+      const sep = cellId.lastIndexOf('-');
+      const numericRowId = Number(sep === -1 ? cellId : cellId.slice(sep + 1));
       if (!Number.isFinite(numericRowId)) return;
 
       const columnIds = columnIdsRef.current ?? [];
       if (columnIds.length === 0) return;
 
-      const idsForThisRowArr = columnIds.map((columnId) => `${columnId}-${numericRowId}`);
-      const idsForThisRowSet = new Set<string>(idsForThisRowArr);
+      const idsForThisRowArray = columnIds.map((columnId) => `${columnId}-${numericRowId}`);
+      const idsForThisRowSet = new Set<string>(idsForThisRowArray);
       const selectedIdsNow = selectedIdsRef.current;
-      const isRowFullySelected = idsForThisRowArr.every((id) => selectedIdsNow.has(id));
+      const isRowFullySelected = idsForThisRowArray.every((id) => selectedIdsNow.has(id));
 
       if (event.ctrlKey || event.metaKey) {
         const currentAnchorId = anchorIdRef.current;
@@ -110,11 +120,11 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
           if (rowHasAnchor) return;
 
           const nextIds = new Set(selectedIdsNow);
-          idsForThisRowArr.forEach((id) => nextIds.delete(id));
+          idsForThisRowArray.forEach((id) => nextIds.delete(id));
           dispatch({ type: 'set', ids: nextIds });
         } else {
           const nextIds = new Set(selectedIdsNow);
-          idsForThisRowArr.forEach((id) => nextIds.add(id));
+          idsForThisRowArray.forEach((id) => nextIds.add(id));
           dispatch({ type: 'set', ids: nextIds });
 
           const nextAnchorId = `${columnIds[0]}-${numericRowId}`;
@@ -174,8 +184,8 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
       if (!Number.isFinite(numericColumnOrder)) return;
 
       const rowIds = rowIdsRef.current ?? [];
-      const columnIds = columnIdsRef.current ?? [];
-      if (rowIds.length === 0 || columnIds.length === 0) return;
+      const tagColumnIds = tagColumnIdsRef.current ?? [];
+      if (rowIds.length === 0 || tagColumnIds.length === 0) return;
 
       const idsForThisColumnArr = rowIds.map((rowId) => `${numericColumnOrder}-${rowId}`);
       const idsForThisColumnSet = new Set<string>(idsForThisColumnArr);
@@ -213,8 +223,8 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
         const anchorColumnOrder = Number(currentAnchorId.slice(0, anchorSep));
         if (!Number.isFinite(anchorColumnOrder)) return;
 
-        const c1 = columnIds.indexOf(anchorColumnOrder);
-        const c2 = columnIds.indexOf(numericColumnOrder);
+        const c1 = tagColumnIds.indexOf(anchorColumnOrder);
+        const c2 = tagColumnIds.indexOf(numericColumnOrder);
         if (c1 === -1 || c2 === -1) return;
 
         const colStart = Math.min(c1, c2);
@@ -222,7 +232,7 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
 
         const rangeIds = new Set<string>();
         for (let c = colStart; c <= colEnd; c++) {
-          const order = columnIds[c];
+          const order = tagColumnIds[c];
           for (const rowId of rowIds) {
             rangeIds.add(`${order}-${rowId}`);
           }
@@ -256,7 +266,7 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
   }, [applyCellClickSelection, setIsDragging]);
 
   const handleMouseDown = useCallback(
-    (event: React.MouseEvent, currentId: string) => {
+    (event: React.MouseEvent, currentId?: string) => {
       if (!currentId || event.ctrlKey || event.metaKey) return;
       event.preventDefault();
 
@@ -276,7 +286,7 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
   );
 
   const handleMouseMove = useCallback(
-    (currentId: string) => {
+    (currentId?: string) => {
       if (!isDraggingRef.current || !anchorIdRef.current || !currentId) {
         return;
       }
@@ -288,7 +298,7 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
         anchorId: anchorIdRef.current,
         currentId,
         rowIds: rowIdsRef.current,
-        columnIds: columnIdsRef.current,
+        columnIds: tagColumnIdsRef.current,
         dispatch,
       });
     },
@@ -301,7 +311,6 @@ export const useTableSelection = ({ normalizedDocuments, dynamicColumns }: UseTa
   }, [endDrag]);
 
   return {
-    endDrag,
     handleFooterCellClick,
     handleAllTagsCellClick,
     handleCellClick,

@@ -31,6 +31,7 @@
 .table-cell-name div p {
     overflow: hidden;
     text-overflow: ellipsis;
+    user-select: none;
 }
 
 .table-cell-tag {
@@ -62,6 +63,14 @@
     background-color: var(--table-tag-bg);
 }
 
+.table-cell-allTags.table-cell-selected-tag,
+.table-cell-notes.table-cell-selected-tag,
+.table-cell-tag.table-cell-selected-tag,
+.table-cell-view.table-cell-selected-tag,
+.table-cell-name.table-cell-selected-tag {
+  background-color: var(--selected-cell);
+}
+
 .table-cell-allTags .inner-table-cell {
    width: 95%;
 }
@@ -86,6 +95,7 @@
 .table-cell-notes div p {
     overflow: hidden;
     text-overflow: ellipsis;
+    user-select: none;
 }
 
 .table-row {
