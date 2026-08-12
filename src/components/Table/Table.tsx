@@ -136,13 +136,12 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
       const numericRowId = Number(rowId);
       if (!Number.isFinite(numericRowId)) return;
 
-      const orders = columnIdsRef.current ?? [];
-      if (orders.length === 0) return;
+      const columnIds = columnIdsRef.current ?? [];
+      if (columnIds.length === 0) return;
 
-      const idsForThisRowArr = orders.map((order) => `${order}-${numericRowId}`);
+      const idsForThisRowArr = columnIds.map((columnId) => `${columnId}-${numericRowId}`);
       const idsForThisRowSet = new Set<string>(idsForThisRowArr);
       const selectedIdsNow = selectedIdsRef.current;
-
       const isRowFullySelected = idsForThisRowArr.every((id) => selectedIdsNow.has(id));
 
       if (event.ctrlKey || event.metaKey) {
@@ -160,7 +159,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           idsForThisRowArr.forEach((id) => nextIds.add(id));
           dispatch({ type: 'set', ids: nextIds });
 
-          const nextAnchorId = `${orders[0]}-${numericRowId}`;
+          const nextAnchorId = `${columnIds[0]}-${numericRowId}`;
           anchorIdRef.current = nextAnchorId;
           setAnchorId(nextAnchorId);
         }
@@ -189,7 +188,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
         const rangeIds = new Set<string>();
         for (let i = start; i <= end; i++) {
           const rowIdInRange = rowIds[i];
-          for (const order of orders) {
+          for (const order of columnIds) {
             rangeIds.add(`${order}-${rowIdInRange}`);
           }
         }
@@ -200,7 +199,80 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
 
       dispatch({ type: 'set', ids: idsForThisRowSet });
 
-      const nextAnchorId = `${orders[0]}-${numericRowId}`;
+      const nextAnchorId = `${columnIds[0]}-${numericRowId}`;
+      anchorIdRef.current = nextAnchorId;
+      setAnchorId(nextAnchorId);
+    },
+    [dispatch, setAnchorId],
+  );
+
+  const handleFooterCellClick = useCallback(
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>, columnOrder: string) => {
+      const numericColumnOrder = Number(columnOrder);
+      if (!Number.isFinite(numericColumnOrder)) return;
+
+      const rowIds = rowIdsRef.current ?? [];
+      const columnIds = columnIdsRef.current ?? [];
+      if (rowIds.length === 0 || columnIds.length === 0) return;
+
+      const idsForThisColumnArr = rowIds.map((rowId) => `${numericColumnOrder}-${rowId}`);
+      const idsForThisColumnSet = new Set<string>(idsForThisColumnArr);
+      const selectedIdsNow = selectedIdsRef.current;
+      const isColumnFullySelected = idsForThisColumnArr.every((id) => selectedIdsNow.has(id));
+
+      if (event.ctrlKey || event.metaKey) {
+        const currentAnchorId = anchorIdRef.current;
+        const columnHasAnchor = Boolean(currentAnchorId && idsForThisColumnSet.has(currentAnchorId));
+
+        if (isColumnFullySelected) {
+          if (columnHasAnchor) return;
+
+          const nextIds = new Set(selectedIdsNow);
+          idsForThisColumnArr.forEach((id) => nextIds.delete(id));
+          dispatch({ type: 'set', ids: nextIds });
+        } else {
+          const nextIds = new Set(selectedIdsNow);
+          idsForThisColumnArr.forEach((id) => nextIds.add(id));
+          dispatch({ type: 'set', ids: nextIds });
+
+          const nextAnchorId = `${numericColumnOrder}-${rowIds[0]}`;
+          anchorIdRef.current = nextAnchorId;
+          setAnchorId(nextAnchorId);
+        }
+        return;
+      }
+
+      if (event.shiftKey) {
+        const currentAnchorId = anchorIdRef.current;
+        if (!currentAnchorId) return;
+        const anchorSep = currentAnchorId.lastIndexOf('-');
+        if (anchorSep === -1) return;
+
+        const anchorColumnOrder = Number(currentAnchorId.slice(0, anchorSep));
+        if (!Number.isFinite(anchorColumnOrder)) return;
+
+        const c1 = columnIds.indexOf(anchorColumnOrder);
+        const c2 = columnIds.indexOf(numericColumnOrder);
+        if (c1 === -1 || c2 === -1) return;
+
+        const colStart = Math.min(c1, c2);
+        const colEnd = Math.max(c1, c2);
+
+        const rangeIds = new Set<string>();
+        for (let c = colStart; c <= colEnd; c++) {
+          const order = columnIds[c];
+          for (const rowId of rowIds) {
+            rangeIds.add(`${order}-${rowId}`);
+          }
+        }
+
+        dispatch({ type: 'set', ids: rangeIds });
+        return;
+      }
+
+      dispatch({ type: 'set', ids: idsForThisColumnSet });
+
+      const nextAnchorId = `${numericColumnOrder}-${rowIds[0]}`;
       anchorIdRef.current = nextAnchorId;
       setAnchorId(nextAnchorId);
     },
@@ -370,6 +442,8 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
               {tagsForHeader.map((tag) => {
                 return (
                   <TableFooter
+                    columnId={tag.order}
+                    onClick={handleFooterCellClick}
                     key={tag.order}
                     value={allExcerptSums[tag.order]}
                     className="tag"

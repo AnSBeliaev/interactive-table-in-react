@@ -49,3 +49,7 @@
 .footer-allTags .inner-footer-cell {
     width: 95%;
 }
+
+.inner-footer-cell p {
+    user-select: none;
+}
