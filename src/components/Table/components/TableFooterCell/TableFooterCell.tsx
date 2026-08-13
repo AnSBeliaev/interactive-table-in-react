@@ -1,4 +1,5 @@
-import styles from './TableFooter.module.css';
+import { useSelection } from '../../../../constext';
+import styles from './TableFooterCell.module.css';
 
 type TableFooterProps = {
   value?: string | number | null;
@@ -9,7 +10,7 @@ type TableFooterProps = {
   onClick?: ((event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => void) | null;
 };
 
-export const TableFooter = ({
+export const TableFooterCell = ({
   value,
   className,
   isTableTag,
@@ -17,10 +18,12 @@ export const TableFooter = ({
   onClick,
   columnId,
 }: TableFooterProps) => {
+  const { selectedIds } = useSelection();
   const currentColumnId = columnId ? String(columnId) : '';
+  const isSelected = selectedIds.has(`${currentColumnId}-footer`);
   return (
     <div
-      className={`${styles['footer-td']} ${styles[`footer-${className}`]}`}
+      className={`${styles['footer-td']} ${styles[`footer-${className}`]} ${isSelected ? styles['footer-cell-selected-tag'] : ''}`}
       onClick={(event) => onClick?.(event, currentColumnId)}
     >
       <div

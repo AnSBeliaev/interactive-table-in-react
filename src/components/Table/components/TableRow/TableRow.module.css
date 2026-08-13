@@ -50,7 +50,7 @@
 }
 
 .table-cell-selected-tag {
-  background-color: #ffff80;
+  background-color: var(--selected-cell);
 }
 
 .table-cell-allTags {

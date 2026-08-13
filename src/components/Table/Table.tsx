@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { TableRow, TableHead, TableFooter } from './components';
+import { TableRow, TableHead, TableFooterCell } from './components';
 import {
   useGetMinAndMaxExcerpt,
   useGetSelectedIdsByRow,
@@ -172,7 +172,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           </div>
           <div className={styles['table-footer']}>
             <div className={styles['footer-left']}>
-              <TableFooter value="All documents" className="documents" />
+              <TableFooterCell value="All documents" className="documents" />
             </div>
             <div
               ref={footerScrollRef}
@@ -187,7 +187,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             >
               {tagsForHeader.map((tag) => {
                 return (
-                  <TableFooter
+                  <TableFooterCell
                     columnId={tag.order}
                     onClick={handleFooterCellClick}
                     key={tag.order}
@@ -201,7 +201,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             </div>
             <div className={styles['footer-right']}>
               {rightColumns.map((column) => (
-                <TableFooter
+                <TableFooterCell
                   key={column.id}
                   value={column.id === 'allTags' ? allTagsSum : null}
                   onClick={column.id === 'allTags' ? handleFooterAlltagsCellClick : null}

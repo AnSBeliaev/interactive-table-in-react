@@ -183,14 +183,19 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
       const numericColumnOrder = Number(columnOrder);
       if (!Number.isFinite(numericColumnOrder)) return;
 
+      const footerId = `${numericColumnOrder}-footer`;
+
       const rowIds = rowIdsRef.current ?? [];
+
       const tagColumnIds = tagColumnIdsRef.current ?? [];
+
       if (rowIds.length === 0 || tagColumnIds.length === 0) return;
 
-      const idsForThisColumnArr = rowIds.map((rowId) => `${numericColumnOrder}-${rowId}`);
-      const idsForThisColumnSet = new Set<string>(idsForThisColumnArr);
+      const idsForThisColumn = rowIds.map((rowId) => `${numericColumnOrder}-${rowId}`);
+      const idsForThisColumnWithFooterCell = [...idsForThisColumn, footerId];
+      const idsForThisColumnSet = new Set<string>(idsForThisColumnWithFooterCell);
       const selectedIdsNow = selectedIdsRef.current;
-      const isColumnFullySelected = idsForThisColumnArr.every((id) => selectedIdsNow.has(id));
+      const isColumnFullySelected = idsForThisColumnWithFooterCell.every((id) => selectedIdsNow.has(id));
 
       if (event.ctrlKey || event.metaKey) {
         const currentAnchorId = anchorIdRef.current;
@@ -200,11 +205,11 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
           if (columnHasAnchor) return;
 
           const nextIds = new Set(selectedIdsNow);
-          idsForThisColumnArr.forEach((id) => nextIds.delete(id));
+          idsForThisColumnWithFooterCell.forEach((id) => nextIds.delete(id));
           dispatch({ type: 'set', ids: nextIds });
         } else {
           const nextIds = new Set(selectedIdsNow);
-          idsForThisColumnArr.forEach((id) => nextIds.add(id));
+          idsForThisColumnWithFooterCell.forEach((id) => nextIds.add(id));
           dispatch({ type: 'set', ids: nextIds });
 
           const nextAnchorId = `${numericColumnOrder}-${rowIds[0]}`;
@@ -233,6 +238,8 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
         const rangeIds = new Set<string>();
         for (let c = colStart; c <= colEnd; c++) {
           const order = tagColumnIds[c];
+          const footerId = `${order}-footer`;
+          rangeIds.add(footerId);
           for (const rowId of rowIds) {
             rangeIds.add(`${order}-${rowId}`);
           }

@@ -57,3 +57,7 @@
 .inner-footer-cell p {
     user-select: none;
 }
+
+.footer-cell-selected-tag {
+  background-color: var(--selected-cell);
+}
