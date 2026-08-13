@@ -162,6 +162,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                       key={tableRowItem.id}
                       data={tableRowItem}
                       columns={rightColumns}
+                      handleMouseMove={handleMouseMove}
                       getCellBackground={getCellBackground}
                       selectedCellIds={selectedCellIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
                     />
@@ -189,7 +190,9 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 return (
                   <TableFooterCell
                     columnId={tag.order}
+                    onMouseMove={handleMouseMove}
                     onClick={handleFooterCellClick}
+                    onMouseDown={handleMouseDown}
                     key={tag.order}
                     value={allExcerptSums[tag.order]}
                     className="tag"
@@ -202,11 +205,13 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             <div className={styles['footer-right']}>
               {rightColumns.map((column) => (
                 <TableFooterCell
+                  columnId={column.id}
                   key={column.id}
                   value={column.id === 'allTags' ? allTagsSum : null}
                   onClick={column.id === 'allTags' ? handleFooterAlltagsCellClick : null}
                   className={column.id}
                   isTableTag
+                  onMouseMove={handleMouseMove}
                   getCellBackground={getCellBackground}
                 />
               ))}

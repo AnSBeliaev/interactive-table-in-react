@@ -128,6 +128,31 @@ export const getCellIdsInRange = ({ anchorId, currentId, rowIds, columnIds, disp
   });
 };
 
+export const getRowSelectedIds = (rowId: string | number) => [
+  `view-${rowId}`,
+  `name-${rowId}`,
+  `allTags-${rowId}`,
+  `notes-${rowId}`,
+];
+
+export const syncSelected = (ids: Set<string>, rowId: string | number, tagColumnIds: number[]) => {
+  const rowTagIds = tagColumnIds.map((order) => `${order}-${rowId}`);
+  const selected = getRowSelectedIds(rowId);
+  const allTagsSelected = rowTagIds.every((id) => ids.has(id));
+
+  if (allTagsSelected) {
+    selected.forEach((id) => ids.add(id));
+  } else {
+    selected.forEach((id) => ids.delete(id));
+  }
+};
+
+export const syncSelectedRows = (ids: Set<string>, rowIds: number[], tagColumnIds: number[]) => {
+  for (const rowId of rowIds) {
+    syncSelected(ids, rowId, tagColumnIds);
+  }
+};
+
 export const getNextAnchorId = (
   remainingIds: Set<string>,
   rowIds: number[] = [],

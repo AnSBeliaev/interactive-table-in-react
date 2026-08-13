@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useSelection } from '../../../constext';
 import type { ColumnItem, TableRowItem, Tag } from '../types';
-import { getCellIdsInRange, getNextAnchorId } from '../helpers';
+import { getCellIdsInRange, getNextAnchorId, syncSelected, syncSelectedRows } from '../helpers';
 
 type UseTableSelectionArgs<T> = {
   normalizedDocuments: (TableRowItem & {
@@ -26,6 +26,7 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
   const selectedIdsRef = useRef(selectedIds);
   const anchorIdRef = useRef(anchorId);
   const isDraggingRef = useRef(isDragging);
+  const dragModeRef = useRef('cells');
   const rowIdsRef = useRef(rowIds);
   const columnIdsRef = useRef(columnIds);
   const tagColumnIdsRef = useRef(tagColumnIds);
@@ -75,13 +76,17 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
       if (!(event.ctrlKey || event.metaKey)) return;
 
       const currentSelectedIds = selectedIdsRef.current;
+      const tags = tagColumnIdsRef.current;
+      const cellSep = cellId.lastIndexOf('-');
+      const currentRow = cellId.slice(cellSep + 1);
+
       if (currentSelectedIds.has(cellId)) {
         const isAnchor = anchorIdRef.current === cellId;
-
         if (isAnchor && currentSelectedIds.size <= 1) return;
 
         const nextIds = new Set(currentSelectedIds);
         nextIds.delete(cellId);
+        syncSelected(nextIds, currentRow, tags);
         dispatch({ type: 'set', ids: nextIds });
 
         if (isAnchor) {
@@ -90,7 +95,10 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
           setAnchorId(nextAnchorId);
         }
       } else {
-        dispatch({ type: 'add', id: cellId });
+        const nextIds = new Set(currentSelectedIds);
+        nextIds.add(cellId);
+        syncSelected(nextIds, currentRow, tags);
+        dispatch({ type: 'set', ids: nextIds });
         anchorIdRef.current = cellId;
         setAnchorId(cellId);
       }
@@ -109,6 +117,7 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
 
       const idsForThisRowArray = columnIds.map((columnId) => `${columnId}-${numericRowId}`);
       const idsForThisRowSet = new Set<string>(idsForThisRowArray);
+
       const selectedIdsNow = selectedIdsRef.current;
       const isRowFullySelected = idsForThisRowArray.every((id) => selectedIdsNow.has(id));
 
@@ -178,6 +187,34 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
     dispatch({ type: 'clear' });
   }, [dispatch]);
 
+  type SelectColumns = { anchorColumnOrder: number; currentColumnOrder: number };
+
+  const selectColumns = useCallback(
+    ({ anchorColumnOrder, currentColumnOrder }: SelectColumns) => {
+      const c1 = tagColumnIds.indexOf(anchorColumnOrder);
+      const c2 = tagColumnIds.indexOf(currentColumnOrder);
+
+      if (c1 === -1 || c2 === -1) return;
+
+      const colStart = Math.min(c1, c2);
+      const colEnd = Math.max(c1, c2);
+
+      const rangeIds = new Set<string>();
+      for (let c = colStart; c <= colEnd; c++) {
+        const order = tagColumnIds[c];
+        const footerId = `${order}-footer`;
+        rangeIds.add(footerId);
+        for (const rowId of rowIds) {
+          rangeIds.add(`${order}-${rowId}`);
+        }
+      }
+
+      syncSelectedRows(rangeIds, rowIds, tagColumnIds);
+      dispatch({ type: 'set', ids: rangeIds });
+    },
+    [dispatch, rowIds, tagColumnIds],
+  );
+
   const handleFooterCellClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>, columnOrder: string) => {
       const numericColumnOrder = Number(columnOrder);
@@ -227,25 +264,7 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
 
         const anchorColumnOrder = Number(currentAnchorId.slice(0, anchorSep));
         if (!Number.isFinite(anchorColumnOrder)) return;
-
-        const c1 = tagColumnIds.indexOf(anchorColumnOrder);
-        const c2 = tagColumnIds.indexOf(numericColumnOrder);
-        if (c1 === -1 || c2 === -1) return;
-
-        const colStart = Math.min(c1, c2);
-        const colEnd = Math.max(c1, c2);
-
-        const rangeIds = new Set<string>();
-        for (let c = colStart; c <= colEnd; c++) {
-          const order = tagColumnIds[c];
-          const footerId = `${order}-footer`;
-          rangeIds.add(footerId);
-          for (const rowId of rowIds) {
-            rangeIds.add(`${order}-${rowId}`);
-          }
-        }
-
-        dispatch({ type: 'set', ids: rangeIds });
+        selectColumns({ anchorColumnOrder, currentColumnOrder: numericColumnOrder });
         return;
       }
 
@@ -255,7 +274,7 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
       anchorIdRef.current = nextAnchorId;
       setAnchorId(nextAnchorId);
     },
-    [dispatch, setAnchorId],
+    [dispatch, setAnchorId, selectColumns],
   );
 
   const endDrag = useCallback(() => {
@@ -282,14 +301,23 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
       mouseDownShiftRef.current = event.shiftKey;
 
       if (!event.shiftKey) {
-        anchorIdRef.current = currentId;
+        if (currentId.endsWith('footer')) {
+          dragModeRef.current = 'footer';
+          const sep = currentId.lastIndexOf('-');
+          const id = currentId.slice(0, sep);
+          anchorIdRef.current = `${id}-${rowIds[0]}`;
+        } else {
+          dragModeRef.current = 'cells';
+          anchorIdRef.current = currentId;
+        }
+
         setAnchorId(currentId);
       }
 
       isDraggingRef.current = true;
       setIsDragging(true);
     },
-    [setAnchorId, setIsDragging],
+    [setAnchorId, setIsDragging, rowIds],
   );
 
   const handleMouseMove = useCallback(
@@ -301,15 +329,35 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
       if (currentId === anchorIdRef.current) return;
 
       didDragRef.current = true;
-      getCellIdsInRange({
-        anchorId: anchorIdRef.current,
-        currentId,
-        rowIds: rowIdsRef.current,
-        columnIds: tagColumnIdsRef.current,
-        dispatch,
-      });
+      if (dragModeRef.current === 'cells') {
+        getCellIdsInRange({
+          anchorId: anchorIdRef.current,
+          currentId,
+          rowIds: rowIdsRef.current,
+          columnIds: tagColumnIdsRef.current,
+          dispatch,
+        });
+      } else {
+        const currentSep = currentId.lastIndexOf('-');
+        const anchorSep = anchorIdRef.current.lastIndexOf('-');
+
+        const currentColumnOrder = currentId.slice(0, currentSep);
+
+        const anchorColumnOrder = anchorIdRef.current.slice(0, anchorSep);
+        if (currentColumnOrder === 'allTags') {
+          selectColumns({
+            anchorColumnOrder: Number(anchorColumnOrder),
+            currentColumnOrder: tagColumnIdsRef.current.length - 1,
+          });
+        } else {
+          selectColumns({
+            anchorColumnOrder: Number(anchorColumnOrder),
+            currentColumnOrder: Number(currentColumnOrder),
+          });
+        }
+      }
     },
-    [dispatch],
+    [selectColumns, dispatch],
   );
 
   useEffect(() => {
