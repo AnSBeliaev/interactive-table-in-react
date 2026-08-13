@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { TableRow, TableHead, TableFooterCell } from './components';
 import {
@@ -20,11 +20,27 @@ type TableProps<T> = {
   rightColumns: ColumnItem<T>[];
 };
 
+const getScrollbarWidth = (): number => {
+  const outer = document.createElement('div');
+  outer.style.visibility = 'hidden';
+  outer.style.overflow = 'scroll';
+  document.body.appendChild(outer);
+
+  const inner = document.createElement('div');
+  outer.appendChild(inner);
+
+  const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+  outer.parentNode?.removeChild(outer);
+  return scrollbarWidth;
+};
+
 const EMPTY_SELECTED_CELL_IDS: ReadonlySet<string> = new Set();
 
 export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowItem>) => {
   const { isDark } = useTheme();
   const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [scrollbarGutter, setScrollbarGutter] = useState(0);
 
   const { selectedIds } = useSelection();
 
@@ -34,6 +50,26 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
   const dynamicColumns = useMemo(() => tagsForHeader.map((tag) => tag.order), [tagsForHeader]);
 
   const allExcerptSums: Record<number, number> = {};
+
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const nativeScrollbarWidth = getScrollbarWidth();
+
+    const updateScrollbarGutter = () => {
+      const hasVerticalScrollbar = viewport.scrollHeight > viewport.clientHeight;
+      setScrollbarGutter(hasVerticalScrollbar ? nativeScrollbarWidth : 0);
+    };
+
+    updateScrollbarGutter();
+
+    const observer = new ResizeObserver(updateScrollbarGutter);
+    observer.observe(viewport);
+    if (viewport.firstElementChild) observer.observe(viewport.firstElementChild);
+
+    return () => observer.disconnect();
+  }, [normalizedDocuments]);
 
   normalizedDocuments.forEach((document) => {
     if (document.tagsByOrder) {
@@ -113,8 +149,9 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
               })}
             </div>
+            {scrollbarGutter > 0 && <div className={styles['scrollbar-spacer']} style={{ width: scrollbarGutter }} />}
           </div>
-          <div className={styles['table-viewport']}>
+          <div ref={viewportRef} className={styles['table-viewport']}>
             <div className={styles['table-body']}>
               <div className={styles['body-left']}>
                 {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
@@ -216,6 +253,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 />
               ))}
             </div>
+            {scrollbarGutter > 0 && <div className={styles['scrollbar-spacer']} style={{ width: scrollbarGutter }} />}
           </div>
         </div>
       </div>

@@ -29,6 +29,7 @@
 
 .head-notes {
     flex: 2;
+    border-right: none;
     color: var(--head-cell-text) !important;
 }
 
