@@ -53,3 +53,9 @@ export type ColumnItem<T> = {
 };
 
 export type TableColumn<T> = ColumnItem<T> | number;
+
+export type TableProps<T> = {
+  data: TableData<T>;
+  leftColumns: ColumnItem<T>[];
+  rightColumns: ColumnItem<T>[];
+};

@@ -7,6 +7,7 @@
     align-items: center;
     justify-content: center;
     border: 1px solid var(--border);
+    border-right: none;
 }
 
 .table-cell-name {
@@ -15,6 +16,7 @@
     overflow: hidden;
     white-space: nowrap;
     border: 1px solid var(--border);
+    border-left: none;
     background-color: var(--table-tag-bg);
     color: var(--cell-text);
 

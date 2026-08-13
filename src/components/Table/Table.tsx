@@ -1,8 +1,9 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useMemo } from 'react';
 
 import { TableRow, TableHead, TableFooterCell } from './components';
 import {
   useGetMinAndMaxExcerpt,
+  useGetScrollbarGutter,
   useGetSelectedIdsByRow,
   useNormalizeDocuments,
   useSyncScroll,
@@ -12,35 +13,13 @@ import { useSelection, useTheme } from '../../constext';
 
 import styles from './Table.module.css';
 
-import type { ColumnItem, TableRowItem, TableData } from './types';
+import type { TableRowItem, TableProps } from './types';
 import { createGetCellBackground } from './helpers';
-type TableProps<T> = {
-  data: TableData<T>;
-  leftColumns: ColumnItem<T>[];
-  rightColumns: ColumnItem<T>[];
-};
-
-const getScrollbarWidth = (): number => {
-  const outer = document.createElement('div');
-  outer.style.visibility = 'hidden';
-  outer.style.overflow = 'scroll';
-  document.body.appendChild(outer);
-
-  const inner = document.createElement('div');
-  outer.appendChild(inner);
-
-  const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
-  outer.parentNode?.removeChild(outer);
-  return scrollbarWidth;
-};
-
-const EMPTY_SELECTED_CELL_IDS: ReadonlySet<string> = new Set();
+import { EMPTY_SELECTED_CELL_IDS } from './constants';
 
 export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowItem>) => {
   const { isDark } = useTheme();
   const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const [scrollbarGutter, setScrollbarGutter] = useState(0);
 
   const { selectedIds } = useSelection();
 
@@ -51,25 +30,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
 
   const allExcerptSums: Record<number, number> = {};
 
-  useLayoutEffect(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-
-    const nativeScrollbarWidth = getScrollbarWidth();
-
-    const updateScrollbarGutter = () => {
-      const hasVerticalScrollbar = viewport.scrollHeight > viewport.clientHeight;
-      setScrollbarGutter(hasVerticalScrollbar ? nativeScrollbarWidth : 0);
-    };
-
-    updateScrollbarGutter();
-
-    const observer = new ResizeObserver(updateScrollbarGutter);
-    observer.observe(viewport);
-    if (viewport.firstElementChild) observer.observe(viewport.firstElementChild);
-
-    return () => observer.disconnect();
-  }, [normalizedDocuments]);
+  const { scrollbarGutter, viewportRef } = useGetScrollbarGutter(normalizedDocuments);
 
   normalizedDocuments.forEach((document) => {
     if (document.tagsByOrder) {
