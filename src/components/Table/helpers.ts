@@ -132,6 +132,7 @@ export const getRowSelectedIds = (rowId: string | number) => [
   `view-${rowId}`,
   `name-${rowId}`,
   `allTags-${rowId}`,
+  `groupNameStr-${rowId}`,
   `notes-${rowId}`,
 ];
 

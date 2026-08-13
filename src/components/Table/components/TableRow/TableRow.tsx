@@ -26,8 +26,7 @@ export const TableRow = memo(
     return (
       <div className={styles['table-row']}>
         {columns.map((column) => {
-          const cellId =
-            typeof column === 'number' ? `${column}-${data.id}` : `${column.id}-${data.id}`;
+          const cellId = typeof column === 'number' ? `${column}-${data.id}` : `${column.id}-${data.id}`;
           const isTag = typeof column === 'number';
           const hasInnerBackground = typeof column === 'number' || column.id === 'allTags';
 
@@ -37,7 +36,6 @@ export const TableRow = memo(
                 ? data[column.dataIndex]
                 : ''
               : data.tagsByOrder?.[column]?.allExcerpt;
-
           return (
             <TableCell
               key={isTag ? column : column.id}

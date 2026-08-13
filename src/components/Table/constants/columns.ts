@@ -19,6 +19,11 @@ export const STATIC_RIGHT_COLUMNS: ColumnItem<TableRowItem>[] = [
     id: 'allTags',
   },
   {
+    title: 'Groups',
+    dataIndex: 'groupNameStr',
+    id: 'groupNameStr',
+  },
+  {
     title: 'Notes',
     dataIndex: 'notes',
     id: 'notes',

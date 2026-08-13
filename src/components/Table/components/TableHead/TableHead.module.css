@@ -22,6 +22,11 @@
     color: var(--head-cell-text) !important;
 }
 
+.head-groupNameStr {
+    flex: 2;
+    color: var(--head-cell-text) !important;
+}
+
 .head-notes {
     flex: 2;
     color: var(--head-cell-text) !important;

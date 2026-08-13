@@ -29,10 +29,10 @@
 
 .header-right,
 .footer-right {
-    flex: 0 0 400px;
+    flex: 0 0 520px;
     height: 60px;
     display: flex;
-        padding-right: 15px;
+    padding-right: 15px;
 }
 
 .header-mid {
@@ -69,7 +69,7 @@
 }
 
 .body-right {
-    flex: 0 0 400px;
+    flex: 0 0 520px;
     height: 60px;
     display: flex;
     flex-direction: column;

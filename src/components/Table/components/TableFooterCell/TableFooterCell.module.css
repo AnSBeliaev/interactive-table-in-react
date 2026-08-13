@@ -35,6 +35,11 @@
     background: var(--table-tag-bg);
 }
 
+.footer-groupNameStr {
+    flex: 2;
+    background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
+}
+
 .footer-notes {
     flex: 2;
     background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);

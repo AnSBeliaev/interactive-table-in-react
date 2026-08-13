@@ -64,6 +64,7 @@
 }
 
 .table-cell-allTags.table-cell-selected-tag,
+.table-cell-groupNameStr.table-cell-selected-tag,
 .table-cell-notes.table-cell-selected-tag,
 .table-cell-tag.table-cell-selected-tag,
 .table-cell-view.table-cell-selected-tag,
@@ -73,6 +74,31 @@
 
 .table-cell-allTags .inner-table-cell {
    width: 95%;
+}
+
+.table-cell-groupNameStr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 2;
+    height: 60px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background-color: var(--table-tag-bg);
+    color: var(--cell-text);
+}
+
+.table-cell-groupNameStr div {
+    width: 90%;
+    text-align: left;
+}
+
+.table-cell-groupNameStr div p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none;
 }
 
 .table-cell-notes {
