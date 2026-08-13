@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useSelection } from '../../../constext';
 import type { ColumnItem, TableRowItem, Tag } from '../types';
-import { getCellIdsInRange, getNextAnchorId, syncSelected, syncSelectedRows } from '../helpers';
+import { getCellIdsInRange, getNextAnchorId, syncSelectedColumn, syncSelectedRow, syncSelectedRows } from '../helpers';
 
 type UseTableSelectionArgs<T> = {
   normalizedDocuments: (TableRowItem & {
@@ -79,6 +79,7 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
       const tags = tagColumnIdsRef.current;
       const cellSep = cellId.lastIndexOf('-');
       const currentRow = cellId.slice(cellSep + 1);
+      const currentColumn = cellId.slice(0, cellSep);
 
       if (currentSelectedIds.has(cellId)) {
         const isAnchor = anchorIdRef.current === cellId;
@@ -86,7 +87,8 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
 
         const nextIds = new Set(currentSelectedIds);
         nextIds.delete(cellId);
-        syncSelected(nextIds, currentRow, tags);
+        syncSelectedRow(nextIds, currentRow, tags);
+        syncSelectedColumn(nextIds, currentColumn, rowIdsRef.current);
         dispatch({ type: 'set', ids: nextIds });
 
         if (isAnchor) {
@@ -97,7 +99,8 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
       } else {
         const nextIds = new Set(currentSelectedIds);
         nextIds.add(cellId);
-        syncSelected(nextIds, currentRow, tags);
+        syncSelectedRow(nextIds, currentRow, tags);
+        syncSelectedColumn(nextIds, currentColumn, rowIdsRef.current);
         dispatch({ type: 'set', ids: nextIds });
         anchorIdRef.current = cellId;
         setAnchorId(cellId);
@@ -244,11 +247,12 @@ export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableS
           const nextIds = new Set(selectedIdsNow);
           idsForThisColumnWithFooterCell.forEach((id) => nextIds.delete(id));
           dispatch({ type: 'set', ids: nextIds });
+          syncSelectedRows(nextIds, rowIds, tagColumnIds);
         } else {
           const nextIds = new Set(selectedIdsNow);
           idsForThisColumnWithFooterCell.forEach((id) => nextIds.add(id));
           dispatch({ type: 'set', ids: nextIds });
-
+          syncSelectedRows(nextIds, rowIds, tagColumnIds);
           const nextAnchorId = `${numericColumnOrder}-${rowIds[0]}`;
           anchorIdRef.current = nextAnchorId;
           setAnchorId(nextAnchorId);

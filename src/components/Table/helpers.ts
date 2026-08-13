@@ -136,7 +136,9 @@ export const getRowSelectedIds = (rowId: string | number) => [
   `notes-${rowId}`,
 ];
 
-export const syncSelected = (ids: Set<string>, rowId: string | number, tagColumnIds: number[]) => {
+const getColumnSelectedIds = (columnOrder: string | number) => [`${columnOrder}-footer`];
+
+export const syncSelectedRow = (ids: Set<string>, rowId: string | number, tagColumnIds: number[]) => {
   const rowTagIds = tagColumnIds.map((order) => `${order}-${rowId}`);
   const selected = getRowSelectedIds(rowId);
   const allTagsSelected = rowTagIds.every((id) => ids.has(id));
@@ -148,9 +150,27 @@ export const syncSelected = (ids: Set<string>, rowId: string | number, tagColumn
   }
 };
 
+export const syncSelectedColumn = (ids: Set<string>, columnId: string | number, rowIds: number[]) => {
+  const rowTagIds = rowIds.map((rowId) => `${columnId}-${rowId}`);
+  const selected = getColumnSelectedIds(columnId);
+  const allTagsSelected = rowTagIds.every((id) => ids.has(id));
+
+  if (allTagsSelected) {
+    selected.forEach((id) => ids.add(id));
+  } else {
+    selected.forEach((id) => ids.delete(id));
+  }
+};
+
 export const syncSelectedRows = (ids: Set<string>, rowIds: number[], tagColumnIds: number[]) => {
   for (const rowId of rowIds) {
-    syncSelected(ids, rowId, tagColumnIds);
+    syncSelectedRow(ids, rowId, tagColumnIds);
+  }
+};
+
+export const syncSelectedColumns = (ids: Set<string>, rowIds: number[], tagColumnIds: number[]) => {
+  for (const columnId of tagColumnIds) {
+    syncSelectedColumn(ids, columnId, rowIds);
   }
 };
 
