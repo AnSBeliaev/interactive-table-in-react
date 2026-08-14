@@ -20,7 +20,6 @@ export const useGetStatistic = (selectedIds: Set<string>) => {
       }
 
       if (isNumericRow) {
-        console.log('id: >>>', id);
         selectedRows.add(String(rowId));
         return;
       }

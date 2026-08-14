@@ -1,18 +1,19 @@
 import { useMemo } from 'react';
+import { getRowAndColumnIds } from '../helpers';
 
 export const useGetSelectedIdsByRow = (selectedIds: Set<string>) => {
   const selectedCellIdsByRow = useMemo(() => {
-    const byRow = new Map<number, Set<string>>();
+    const cellsByRow = new Map<number, Set<string>>();
+
     selectedIds.forEach((cellId) => {
-      const sep = cellId.lastIndexOf('-');
-      if (sep === -1) return;
-      const rowId = Number(cellId.slice(sep + 1));
-      if (!Number.isFinite(rowId)) return;
-      const rowSet = byRow.get(rowId) ?? new Set<string>();
+      const { rowId } = getRowAndColumnIds(cellId);
+      if (!Number.isFinite(rowId) || !rowId) return;
+      const rowSet = cellsByRow.get(rowId) ?? new Set<string>();
       rowSet.add(cellId);
-      byRow.set(rowId, rowSet);
+      cellsByRow.set(rowId, rowSet);
     });
-    return byRow;
+
+    return cellsByRow;
   }, [selectedIds]);
   return selectedCellIdsByRow;
 };
