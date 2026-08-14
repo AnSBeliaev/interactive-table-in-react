@@ -1,16 +1,18 @@
 import styles from './TableStatistic.module.css';
 
 type TableStatisticProps = {
-  selectedIds: Set<string>;
+  numberOfCells: number;
+  numberOfRows?: number;
+  numberOfColumns?: number;
 };
 
-export const TableStatistic = ({ selectedIds }: TableStatisticProps) => {
+export const TableStatistic = ({ numberOfCells }: TableStatisticProps) => {
   return (
     <div className={styles['data-statistic']}>
       <ul>
-        <li>Выбрано строк: </li>
-        <li>Выбрано столбцов: </li>
-        <li>Выбрано ячеек: {selectedIds.size}</li>
+        {/* <li>Выбрано строк: {numberOfRows}</li> */}
+        {/* <li>Выбрано столбцов: {numberOfColumns}</li> */}
+        <li>Выбрано ячеек: {numberOfCells}</li>
       </ul>
     </div>
   );

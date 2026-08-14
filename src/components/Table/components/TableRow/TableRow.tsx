@@ -29,13 +29,13 @@ export const TableRow = memo(
           const cellId = typeof column === 'number' ? `${column}-${data.id}` : `${column.id}-${data.id}`;
           const isTag = typeof column === 'number';
           const hasInnerBackground = typeof column === 'number' || column.id === 'allTags';
-
           const value =
             typeof column !== 'number'
               ? column.dataIndex
                 ? data[column.dataIndex]
                 : ''
-              : data.tagsByOrder?.[column]?.allExcerpt;
+              : (data.tagsByOrder?.get(column)?.allExcerpt ?? '');
+
           return (
             <TableCell
               key={isTag ? column : column.id}

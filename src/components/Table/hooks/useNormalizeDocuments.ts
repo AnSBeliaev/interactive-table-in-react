@@ -12,14 +12,13 @@ const isTag = (value: unknown): value is Tag => {
 export const useNormalizeDocuments = <T extends TableRowItem>({ documents }: UseNormalizeDocumentsArgs<T>) => {
   return useMemo(() => {
     return documents.map((document) => {
-      const tagsByOrder: Tag[] = [];
+      const tagsByOrder = new Map<number, Tag>([]);
       Object.entries(document).forEach(([, value]) => {
-        if (isTag(value)) tagsByOrder.push(value);
+        if (isTag(value)) tagsByOrder.set(value.order, value);
       });
-
       return {
         ...document,
-        tagsByOrder: [...tagsByOrder],
+        tagsByOrder,
       };
     });
   }, [documents]);

@@ -19,7 +19,7 @@ export type TableRowItem = {
   customName: string | null;
   projectDocumentId: number;
   allTags: number;
-  tagsByOrder?: { [order: number]: Tag | undefined };
+  tagsByOrder?: Map<number, Tag>;
 };
 
 export type ExcerptsCount = {
@@ -61,5 +61,5 @@ export type TableProps<T> = {
 };
 
 export type NormalizeDocuments = (TableRowItem & {
-  tagsByOrder: Tag[];
+  tagsByOrder: Map<number, Tag>;
 })[];

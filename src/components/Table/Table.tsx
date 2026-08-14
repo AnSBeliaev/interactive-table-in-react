@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { TableRow, TableHead, TableFooterCell, TableStatistic } from './components';
 import {
@@ -205,7 +205,11 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           </div>
         </div>
       </div>
-      <TableStatistic selectedIds={selectedIds} />
+      <TableStatistic
+        numberOfCells={selectedIds.size}
+        // numberOfRows={rowIds.length}
+        // numberOfColumns={columnIds.length}
+      />
     </>
   );
 };

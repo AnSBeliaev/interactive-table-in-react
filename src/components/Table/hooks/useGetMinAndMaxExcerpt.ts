@@ -1,11 +1,7 @@
 import { useMemo } from 'react';
-import type { TableRowItem, Tag } from '../types';
+import type { NormalizeDocuments } from '../types';
 
-export const useGetMinAndMaxExcerpt = (
-  normalizedDocuments: (TableRowItem & {
-    tagsByOrder: Tag[];
-  })[],
-) => {
+export const useGetMinAndMaxExcerpt = (normalizedDocuments: NormalizeDocuments) => {
   const { minAllExcerpt, maxAllExcerpt } = useMemo(() => {
     let minAllExcerpt: number | null = null;
     let maxAllExcerpt: number | null = null;

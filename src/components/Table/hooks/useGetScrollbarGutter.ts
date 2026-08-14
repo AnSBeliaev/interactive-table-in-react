@@ -1,12 +1,8 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { getScrollbarWidth } from '../helpers';
-import type { TableRowItem, Tag } from '../types';
+import type { NormalizeDocuments } from '../types';
 
-export const useGetScrollbarGutter = (
-  normalizedDocuments: (TableRowItem & {
-    tagsByOrder: Tag[];
-  })[],
-) => {
+export const useGetScrollbarGutter = (normalizedDocuments: NormalizeDocuments) => {
   const [scrollbarGutter, setScrollbarGutter] = useState(0);
   const viewportRef = useRef<HTMLDivElement>(null);
 
