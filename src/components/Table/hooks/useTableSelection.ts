@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useSelection } from '../../../constext';
 import type { ColumnItem } from '../types';
-import { getCellIdsInRange, getNextAnchorId, syncSelectedColumn, syncSelectedRow, syncSelectedRows } from '../helpers';
+import {
+  getCellIdsInRange,
+  getNextAnchorId,
+  syncSelectedColumn,
+  syncSelectedColumns,
+  syncSelectedRow,
+  syncSelectedRows,
+} from '../helpers';
 
 type UseTableSelectionArgs<T> = {
   columns: (number | ColumnItem<T>)[];
@@ -127,12 +134,15 @@ export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSel
 
           const nextIds = new Set(selectedIdsNow);
           idsForThisRowArray.forEach((id) => nextIds.delete(id));
+
           dispatch({ type: 'set', ids: nextIds });
+          syncSelectedColumns(nextIds, rowIds, tagColumnIds);
         } else {
           const nextIds = new Set(selectedIdsNow);
           idsForThisRowArray.forEach((id) => nextIds.add(id));
-          dispatch({ type: 'set', ids: nextIds });
 
+          dispatch({ type: 'set', ids: nextIds });
+          syncSelectedColumns(nextIds, rowIds, tagColumnIds);
           const nextAnchorId = `${columnIds[0]}-${numericRowId}`;
           anchorIdRef.current = nextAnchorId;
           setAnchorId(nextAnchorId);
@@ -168,6 +178,7 @@ export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSel
         }
 
         dispatch({ type: 'set', ids: rangeIds });
+        syncSelectedColumns(rangeIds, rowIds, tagColumnIds);
         return;
       }
 
@@ -177,7 +188,7 @@ export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSel
       anchorIdRef.current = nextAnchorId;
       setAnchorId(nextAnchorId);
     },
-    [dispatch, setAnchorId],
+    [dispatch, setAnchorId, rowIds, tagColumnIds],
   );
 
   const handleFooterAlltagsCellClick = useCallback(() => {
