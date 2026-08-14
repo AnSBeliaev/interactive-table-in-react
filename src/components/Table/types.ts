@@ -59,3 +59,7 @@ export type TableProps<T> = {
   leftColumns: ColumnItem<T>[];
   rightColumns: ColumnItem<T>[];
 };
+
+export type NormalizeDocuments = (TableRowItem & {
+  tagsByOrder: Tag[];
+})[];

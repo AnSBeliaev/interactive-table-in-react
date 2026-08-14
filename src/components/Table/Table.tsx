@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
-import { TableRow, TableHead, TableFooterCell } from './components';
+import { TableRow, TableHead, TableFooterCell, TableStatistic } from './components';
 import {
+  useGetSums,
   useGetMinAndMaxExcerpt,
   useGetScrollbarGutter,
   useGetSelectedIdsByRow,
@@ -19,36 +20,15 @@ import { EMPTY_SELECTED_CELL_IDS } from './constants';
 
 export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowItem>) => {
   const { isDark } = useTheme();
-  const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
-
-  const { selectedIds } = useSelection();
-
   const { documents, tagsForHeader } = data;
   const normalizedDocuments = useNormalizeDocuments({ documents });
 
-  const dynamicColumns = useMemo(() => tagsForHeader.map((tag) => tag.order), [tagsForHeader]);
-
-  const allExcerptSums: Record<number, number> = {};
-
+  const { selectedIds } = useSelection();
   const { scrollbarGutter, viewportRef } = useGetScrollbarGutter(normalizedDocuments);
+  const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
 
-  normalizedDocuments.forEach((document) => {
-    if (document.tagsByOrder) {
-      document.tagsByOrder.forEach((tag) => {
-        const value = Number(tag.allExcerpt) || 0;
-        allExcerptSums[tag.order] = (allExcerptSums[tag.order] ?? 0) + value;
-      });
-    }
-  });
-
-  const allTagsSum = useMemo(() => {
-    let sum = 0;
-    normalizedDocuments.forEach((document) => {
-      sum += document.allTags;
-    });
-    return sum;
-  }, [normalizedDocuments]);
-
+  const dynamicColumns = useMemo(() => tagsForHeader.map((tag) => tag.order), [tagsForHeader]);
+  const { allExcerptSums, allTagsSum } = useGetSums(normalizedDocuments);
   const { minAllExcerpt, maxAllExcerpt } = useGetMinAndMaxExcerpt(normalizedDocuments);
 
   const getCellBackground = useMemo(
@@ -61,6 +41,12 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     [leftColumns, dynamicColumns, rightColumns],
   );
 
+  const rowIds = useMemo(() => normalizedDocuments?.map((document) => document.id), [normalizedDocuments]);
+  const columnIds = useMemo(
+    () => columns.map((column) => (typeof column === 'number' ? column : column.id)),
+    [columns],
+  );
+
   const {
     handleFooterCellClick,
     handleAllTagsCellClick,
@@ -69,8 +55,9 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     handleMouseMove,
     handleFooterAlltagsCellClick,
   } = useTableSelection({
-    normalizedDocuments,
     columns,
+    rowIds,
+    columnIds,
   });
 
   const selectedCellIdsByRow = useGetSelectedIdsByRow(selectedIds);
@@ -218,6 +205,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           </div>
         </div>
       </div>
+      <TableStatistic selectedIds={selectedIds} />
     </>
   );
 };

@@ -1,23 +1,17 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useSelection } from '../../../constext';
-import type { ColumnItem, TableRowItem, Tag } from '../types';
+import type { ColumnItem } from '../types';
 import { getCellIdsInRange, getNextAnchorId, syncSelectedColumn, syncSelectedRow, syncSelectedRows } from '../helpers';
 
 type UseTableSelectionArgs<T> = {
-  normalizedDocuments: (TableRowItem & {
-    tagsByOrder: Tag[];
-  })[];
   columns: (number | ColumnItem<T>)[];
+  columnIds: (string | number)[];
+  rowIds: number[];
 };
 
-export const useTableSelection = <T>({ normalizedDocuments, columns }: UseTableSelectionArgs<T>) => {
+export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSelectionArgs<T>) => {
   const { selectedIds, dispatch, setAnchorId, anchorId, isDragging, setIsDragging } = useSelection();
 
-  const rowIds = useMemo(() => normalizedDocuments?.map((document) => document.id), [normalizedDocuments]);
-  const columnIds = useMemo(
-    () => columns.map((column) => (typeof column === 'number' ? column : column.id)),
-    [columns],
-  );
   const tagColumnIds = useMemo(
     () => columns.filter((column): column is number => typeof column === 'number'),
     [columns],
