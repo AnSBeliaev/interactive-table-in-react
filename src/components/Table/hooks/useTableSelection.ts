@@ -4,6 +4,7 @@ import type { ColumnItem } from '../types';
 import {
   getCellIdsInRange,
   getNextAnchorId,
+  getRowAndColumnIds,
   syncSelectedColumn,
   syncSelectedColumns,
   syncSelectedRow,
@@ -78,9 +79,7 @@ export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSel
 
       const currentSelectedIds = selectedIdsRef.current;
       const tags = tagColumnIdsRef.current;
-      const cellSep = cellId.lastIndexOf('-');
-      const currentRow = cellId.slice(cellSep + 1);
-      const currentColumn = cellId.slice(0, cellSep);
+      const { columnId, rowId } = getRowAndColumnIds(cellId);
 
       if (currentSelectedIds.has(cellId)) {
         const isAnchor = anchorIdRef.current === cellId;
@@ -88,8 +87,8 @@ export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSel
 
         const nextIds = new Set(currentSelectedIds);
         nextIds.delete(cellId);
-        syncSelectedRow(nextIds, currentRow, tags);
-        syncSelectedColumn(nextIds, currentColumn, rowIdsRef.current);
+        syncSelectedRow(nextIds, rowId, tags);
+        syncSelectedColumn(nextIds, columnId, rowIdsRef.current);
         dispatch({ type: 'set', ids: nextIds });
 
         if (isAnchor) {
@@ -100,8 +99,8 @@ export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSel
       } else {
         const nextIds = new Set(currentSelectedIds);
         nextIds.add(cellId);
-        syncSelectedRow(nextIds, currentRow, tags);
-        syncSelectedColumn(nextIds, currentColumn, rowIdsRef.current);
+        syncSelectedRow(nextIds, rowId, tags);
+        syncSelectedColumn(nextIds, columnId, rowIdsRef.current);
         dispatch({ type: 'set', ids: nextIds });
         anchorIdRef.current = cellId;
         setAnchorId(cellId);
@@ -351,8 +350,8 @@ export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSel
         const anchorSep = anchorIdRef.current.lastIndexOf('-');
 
         const currentColumnOrder = currentId.slice(0, currentSep);
-
         const anchorColumnOrder = anchorIdRef.current.slice(0, anchorSep);
+
         if (currentColumnOrder === 'allTags') {
           selectColumns({
             anchorColumnOrder: Number(anchorColumnOrder),

@@ -105,12 +105,9 @@ type GetCellIdsInRangeArgs = {
 
 export const getCellIdsInRange = ({ anchorId, currentId, rowIds, columnIds, dispatch }: GetCellIdsInRangeArgs) => {
   if (!rowIds) return;
-  const anchorSep = anchorId.lastIndexOf('-');
-  const currentSep = currentId.lastIndexOf('-');
-  const anchorColumnId = anchorId.slice(0, anchorSep);
-  const anchorRowId = anchorId.slice(anchorSep + 1);
-  const currentColumnId = currentId.slice(0, currentSep);
-  const currentRowId = currentId.slice(currentSep + 1);
+  const { columnId: anchorColumnId, rowId: anchorRowId } = getRowAndColumnIds(anchorId);
+  const { columnId: currentColumnId, rowId: currentRowId } = getRowAndColumnIds(currentId);
+
   const selectedIdsSet = new Set<string>();
 
   const r1 = rowIds.indexOf(Number(anchorRowId));
@@ -138,7 +135,8 @@ export const getRowSelectedIds = (rowId: string | number) => [
 
 const getColumnSelectedIds = (columnOrder: string | number) => [`${columnOrder}-footer`];
 
-export const syncSelectedRow = (ids: Set<string>, rowId: string | number, tagColumnIds: number[]) => {
+export const syncSelectedRow = (ids: Set<string>, rowId: string | number | null, tagColumnIds: number[]) => {
+  if (!rowId) return;
   const rowTagIds = tagColumnIds.map((order) => `${order}-${rowId}`);
   const selected = getRowSelectedIds(rowId);
   const allTagsSelected = rowTagIds.every((id) => ids.has(id));
@@ -150,7 +148,8 @@ export const syncSelectedRow = (ids: Set<string>, rowId: string | number, tagCol
   }
 };
 
-export const syncSelectedColumn = (ids: Set<string>, columnId: string | number, rowIds: number[]) => {
+export const syncSelectedColumn = (ids: Set<string>, columnId: string | number | null, rowIds: number[]) => {
+  if (!columnId) return;
   const rowTagIds = rowIds.map((rowId) => `${columnId}-${rowId}`);
   const selected = getColumnSelectedIds(columnId);
   const allTagsSelected = rowTagIds.every((id) => ids.has(id));
