@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import styles from './TableHead.module.css';
 
 type TableHeadProps = {
@@ -6,7 +7,7 @@ type TableHeadProps = {
   className: string;
 };
 
-export const TableHead = (props: TableHeadProps) => {
+export const TableHead = memo((props: TableHeadProps) => {
   return (
     <div
       title={props.item}
@@ -15,4 +16,4 @@ export const TableHead = (props: TableHeadProps) => {
       <div style={{ backgroundColor: props.tagColor }}>{props.item}</div>
     </div>
   );
-};
+});

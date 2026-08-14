@@ -64,7 +64,8 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     columnIds,
   });
 
-  const selectedCellIdsByRow = useGetSelectedIdsByRow(selectedIds);
+  const selectedTagIdsByRow = useGetSelectedIdsByRow(selectedIds, true);
+  const selectedSideIdsByRow = useGetSelectedIdsByRow(selectedIds, false);
 
   return (
     <>
@@ -112,7 +113,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                       key={tableRowItem.id}
                       data={tableRowItem}
                       columns={leftColumns}
-                      selectedCellIds={selectedCellIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
+                      selectedCellIds={selectedSideIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
                     />
                   );
                 })}
@@ -138,7 +139,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                       handleCellClick={handleCellClick}
                       handleMouseMove={handleMouseMove}
                       handleMouseDown={handleMouseDown}
-                      selectedCellIds={selectedCellIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
+                      selectedCellIds={selectedTagIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
                     />
                   );
                 })}
@@ -153,7 +154,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                       columns={rightColumns}
                       handleMouseMove={handleMouseMove}
                       getCellBackground={getCellBackground}
-                      selectedCellIds={selectedCellIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
+                      selectedCellIds={selectedSideIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
                     />
                   );
                 })}
@@ -186,6 +187,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                     value={allExcerptSums[tag.order]}
                     className="tag"
                     isTableTag
+                    isSelected={selectedIds.has(`${tag.order}-footer`)}
                     getCellBackground={getCellBackground}
                   />
                 );
@@ -200,6 +202,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                   onClick={column.id === 'allTags' ? handleFooterAlltagsCellClick : null}
                   className={column.id}
                   isTableTag
+                  isSelected={selectedIds.has(`${column.id}-footer`)}
                   onMouseMove={handleMouseMove}
                   getCellBackground={getCellBackground}
                 />
