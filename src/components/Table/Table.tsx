@@ -1,64 +1,71 @@
 import { useMemo } from 'react';
 
-import { TableRow, TableHead, TableFooter } from './components';
-import { useNormalizeDocuments, useSyncScroll } from './hooks';
+import { TableRow, TableHead, TableFooterCell, TableStatistic } from './components';
+import {
+  useGetSums,
+  useGetMinAndMaxExcerpt,
+  useGetScrollbarGutter,
+  useGetSelectedIdsByRow,
+  useNormalizeDocuments,
+  useSyncScroll,
+  useTableSelection,
+  useGetStatistic,
+} from './hooks';
+import { useSelection, useTheme } from '../../constext';
 
 import styles from './Table.module.css';
 
-import type { ColumnItem, TableRowItem, TableData } from './types';
+import type { TableRowItem, TableProps } from './types';
 import { createGetCellBackground } from './helpers';
-
-type TableProps<T> = {
-  data: TableData<T>;
-  leftColumns: ColumnItem<T>[];
-  rightColumns: ColumnItem<T>[];
-};
+import { EMPTY_SELECTED_CELL_IDS } from './constants';
 
 export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowItem>) => {
-  const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
-
+  const { isDark } = useTheme();
   const { documents, tagsForHeader } = data;
   const normalizedDocuments = useNormalizeDocuments({ documents });
 
-  const dynamicColumns = tagsForHeader.map((tag) => {
-    return tag.order;
+  const { selectedIds } = useSelection();
+
+  const { selectedCells, selectedRows, selectedColumns } = useGetStatistic(selectedIds);
+
+  const { scrollbarGutter, viewportRef } = useGetScrollbarGutter(normalizedDocuments);
+  const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
+
+  const dynamicColumns = useMemo(() => tagsForHeader.map((tag) => tag.order), [tagsForHeader]);
+  const { allExcerptSums, allTagsSum } = useGetSums(normalizedDocuments);
+  const { minAllExcerpt, maxAllExcerpt } = useGetMinAndMaxExcerpt(normalizedDocuments);
+
+  const getCellBackground = useMemo(
+    () => createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt, isDark }),
+    [minAllExcerpt, maxAllExcerpt, isDark],
+  );
+
+  const columns = useMemo(
+    () => [...leftColumns, ...dynamicColumns, ...rightColumns],
+    [leftColumns, dynamicColumns, rightColumns],
+  );
+
+  const rowIds = useMemo(() => normalizedDocuments?.map((document) => document.id), [normalizedDocuments]);
+  const columnIds = useMemo(
+    () => columns.map((column) => (typeof column === 'number' ? column : column.id)),
+    [columns],
+  );
+
+  const {
+    handleFooterCellClick,
+    handleAllTagsCellClick,
+    handleCellClick,
+    handleMouseDown,
+    handleMouseMove,
+    handleFooterAlltagsCellClick,
+  } = useTableSelection({
+    columns,
+    rowIds,
+    columnIds,
   });
 
-  const allExcerptSums: Record<number, number> = {};
-
-  normalizedDocuments.forEach((document) => {
-    if (document.tagsByOrder) {
-      document.tagsByOrder.forEach((tag) => {
-        const value = Number(tag.allExcerpt) || 0;
-        allExcerptSums[tag.order] = (allExcerptSums[tag.order] ?? 0) + value;
-      });
-    }
-  });
-
-  const allTagsSum = useMemo(() => {
-    let sum = 0;
-    normalizedDocuments.forEach((document) => {
-      sum += document.allTags;
-    });
-    return sum;
-  }, [normalizedDocuments]);
-
-  const { minAllExcerpt, maxAllExcerpt } = useMemo(() => {
-    let minAllExcerpt: number | null = null;
-    let maxAllExcerpt: number | null = null;
-    normalizedDocuments.forEach((document) => {
-      if (!document.tagsByOrder) return;
-      document.tagsByOrder.forEach((tag) => {
-        if (minAllExcerpt == null) minAllExcerpt = Number(tag.allExcerpt);
-        if (maxAllExcerpt == null) maxAllExcerpt = Number(tag.allExcerpt);
-        if (Number(tag.allExcerpt) < minAllExcerpt) minAllExcerpt = Number(tag.allExcerpt);
-        if (Number(tag.allExcerpt) > maxAllExcerpt) maxAllExcerpt = Number(tag.allExcerpt);
-      });
-    });
-    return { minAllExcerpt, maxAllExcerpt };
-  }, [normalizedDocuments]);
-
-  const getCellBackground = createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt });
+  const selectedTagIdsByRow = useGetSelectedIdsByRow(selectedIds, true);
+  const selectedSideIdsByRow = useGetSelectedIdsByRow(selectedIds, false);
 
   return (
     <>
@@ -95,12 +102,20 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
               })}
             </div>
+            {scrollbarGutter > 0 && <div className={styles['scrollbar-spacer']} style={{ width: scrollbarGutter }} />}
           </div>
-          <div className={styles['table-viewport']}>
+          <div ref={viewportRef} className={styles['table-viewport']}>
             <div className={styles['table-body']}>
               <div className={styles['body-left']}>
                 {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-                  return <TableRow key={tableRowItem.id} data={tableRowItem} columns={leftColumns} />;
+                  return (
+                    <TableRow
+                      key={tableRowItem.id}
+                      data={tableRowItem}
+                      columns={leftColumns}
+                      selectedCellIds={selectedSideIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
+                    />
+                  );
                 })}
               </div>
               <div
@@ -121,6 +136,10 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                       data={tableRowItem}
                       columns={dynamicColumns}
                       getCellBackground={getCellBackground}
+                      handleCellClick={handleCellClick}
+                      handleMouseMove={handleMouseMove}
+                      handleMouseDown={handleMouseDown}
+                      selectedCellIds={selectedTagIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
                     />
                   );
                 })}
@@ -129,10 +148,13 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
                   return (
                     <TableRow
+                      handleCellClick={handleAllTagsCellClick}
                       key={tableRowItem.id}
                       data={tableRowItem}
                       columns={rightColumns}
+                      handleMouseMove={handleMouseMove}
                       getCellBackground={getCellBackground}
+                      selectedCellIds={selectedSideIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
                     />
                   );
                 })}
@@ -141,7 +163,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           </div>
           <div className={styles['table-footer']}>
             <div className={styles['footer-left']}>
-              <TableFooter value="All documents" className="documents" />
+              <TableFooterCell value="All documents" className="documents" />
             </div>
             <div
               ref={footerScrollRef}
@@ -156,11 +178,16 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             >
               {tagsForHeader.map((tag) => {
                 return (
-                  <TableFooter
+                  <TableFooterCell
+                    columnId={tag.order}
+                    onMouseMove={handleMouseMove}
+                    onClick={handleFooterCellClick}
+                    onMouseDown={handleMouseDown}
                     key={tag.order}
                     value={allExcerptSums[tag.order]}
                     className="tag"
                     isTableTag
+                    isSelected={selectedIds.has(`${tag.order}-footer`)}
                     getCellBackground={getCellBackground}
                   />
                 );
@@ -168,18 +195,28 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             </div>
             <div className={styles['footer-right']}>
               {rightColumns.map((column) => (
-                <TableFooter
+                <TableFooterCell
+                  columnId={column.id}
                   key={column.id}
                   value={column.id === 'allTags' ? allTagsSum : null}
+                  onClick={column.id === 'allTags' ? handleFooterAlltagsCellClick : null}
                   className={column.id}
                   isTableTag
+                  isSelected={selectedIds.has(`${column.id}-footer`)}
+                  onMouseMove={handleMouseMove}
                   getCellBackground={getCellBackground}
                 />
               ))}
             </div>
+            {scrollbarGutter > 0 && <div className={styles['scrollbar-spacer']} style={{ width: scrollbarGutter }} />}
           </div>
         </div>
       </div>
+      <TableStatistic
+        numberOfCells={selectedCells.size}
+        numberOfRows={selectedRows.size}
+        numberOfColumns={selectedColumns.size}
+      />
     </>
   );
 };

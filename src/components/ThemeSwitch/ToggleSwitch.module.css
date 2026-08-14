@@ -20,7 +20,6 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  cursor: pointer;
   user-select: none;
 }
 
@@ -28,6 +27,7 @@
   position: relative;
   width: 50px;
   height: 26px;
+    cursor: pointer;
 }
 
 .switch-slider::before {

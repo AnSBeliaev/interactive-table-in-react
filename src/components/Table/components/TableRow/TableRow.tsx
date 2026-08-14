@@ -1,39 +1,57 @@
+import { memo } from 'react';
 import type { TableColumn, TableRowItem } from '../../types';
 import styles from './TableRow.module.css';
+import { TableCell } from '../TableCell';
 
 type TableRowProps<T> = {
   data: T;
   columns: TableColumn<T>[];
   getCellBackground?: ({ value }: { value: string }) => string;
+  handleCellClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => void;
+  handleMouseDown?: (event: React.MouseEvent<Element, MouseEvent>, currentId?: string) => void;
+  handleMouseMove?: (currentId?: string) => void;
+  selectedCellIds?: ReadonlySet<string>;
 };
 
-export const TableRow = <T extends TableRowItem>({ data, columns, getCellBackground }: TableRowProps<T>) => {
-  return (
-    <div className={styles['table-row']}>
-      {columns.map((column) => {
-        const isTag = typeof column === 'number';
-        const hasInnerBackground = isTag || column.id === 'allTags';
+export const TableRow = memo(
+  <T extends TableRowItem>({
+    data,
+    columns,
+    getCellBackground,
+    handleCellClick,
+    handleMouseDown,
+    handleMouseMove,
+    selectedCellIds,
+  }: TableRowProps<T>) => {
+    return (
+      <div className={styles['table-row']}>
+        {columns.map((column) => {
+          const cellId = typeof column === 'number' ? `${column}-${data.id}` : `${column.id}-${data.id}`;
+          const isTag = typeof column === 'number';
+          const hasInnerBackground = typeof column === 'number' || column.id === 'allTags';
+          const value =
+            typeof column !== 'number'
+              ? column.dataIndex
+                ? data[column.dataIndex]
+                : ''
+              : (data.tagsByOrder?.get(column)?.allExcerpt ?? '');
 
-        const value =
-          typeof column !== 'number'
-            ? column.dataIndex
-              ? data[column.dataIndex]
-              : ''
-            : data.tagsByOrder?.[column]?.allExcerpt;
-
-        return (
-          <div key={isTag ? column : column.id} className={styles[`table-cell-${isTag ? 'tag' : String(column.id)}`]}>
-            <div
-              className={styles[`${hasInnerBackground ? 'inner-table-cell' : ''}`]}
-              style={{
-                backgroundColor: `${getCellBackground ? `${getCellBackground({ value: String(value) })}` : ''}`,
-              }}
-            >
-              {value ? String(value) : ''}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+          return (
+            <TableCell
+              key={isTag ? column : column.id}
+              value={value}
+              cellId={cellId}
+              column={column}
+              isSelected={Boolean(selectedCellIds?.has(cellId))}
+              handleMouseDown={handleMouseDown}
+              handleMouseMove={handleMouseMove}
+              getCellBackground={getCellBackground}
+              handleCellClick={handleCellClick}
+              hasInnerBackground={hasInnerBackground}
+            />
+          );
+        })}
+      </div>
+    );
+  },
+);

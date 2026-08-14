@@ -5,14 +5,25 @@ type ThemeProviderProps = {
   children: ReactNode;
 };
 
+const applyTheme = (isDark: boolean) => {
+  document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+};
+
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [isDark, setIsDark] = useState(false);
+
   const toggleMode = () => {
-    setIsDark((mode) => !mode);
+    setIsDark((mode) => {
+      const next = !mode;
+      applyTheme(next);
+      return next;
+    });
   };
+
   useEffect(() => {
-    document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+    applyTheme(isDark);
   }, [isDark]);
+
   return <ThemeContext.Provider value={{ isDark, toggleMode }}>{children}</ThemeContext.Provider>;
 };
 

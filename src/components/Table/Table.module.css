@@ -16,6 +16,26 @@
     max-height: 500px;
 }
 
+.table-viewport::-webkit-scrollbar {
+    width: 12px;
+}
+
+.footer-mid::-webkit-scrollbar {
+  height: 12px;
+}
+
+.table-viewport::-webkit-scrollbar-thumb,
+.footer-mid::-webkit-scrollbar-thumb {
+  background: var(--head-cell-text);
+  border-radius: 6px;
+}
+
+.table-viewport::-webkit-scrollbar-track,
+.footer-mid::-webkit-scrollbar-track {
+  background: var(--table-tag-bg);;
+  border: 1px solid var(--border);
+}
+
 .table-header {
     display: flex;
 }
@@ -29,10 +49,16 @@
 
 .header-right,
 .footer-right {
-    flex: 0 0 600px;
+    flex: 0 0 520px;
     height: 60px;
     display: flex;
-        padding-right: 15px;
+}
+
+.scrollbar-spacer {
+    flex: 0 0 auto;
+    height: 60px;
+    border-left: none;
+    background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
 }
 
 .header-mid {
@@ -69,7 +95,7 @@
 }
 
 .body-right {
-    flex: 0 0 600px;
+    flex: 0 0 520px;
     height: 60px;
     display: flex;
     flex-direction: column;
@@ -92,7 +118,7 @@
 .header-mid,
 .body-mid,
 .footer-mid {
-  flex: 1 0 0;
+  flex: 1 0 300px;
   min-width: 0;
   overflow-x: auto;
 }

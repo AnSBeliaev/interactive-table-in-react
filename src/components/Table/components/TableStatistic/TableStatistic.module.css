@@ -1,0 +1,17 @@
+.data-statistic {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    margin-top: 50px;
+    border-radius: 15px;
+    background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
+}
+
+.data-statistic ul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    list-style-type: none;
+    column-gap: 35px;
+    color: var(--cell-text);
+}

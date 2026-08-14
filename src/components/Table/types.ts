@@ -9,7 +9,7 @@ export type Tag = {
 export type TableRowItem = {
   id: number;
   name: string | null;
-  groupName: string | null;
+  groupName: string[] | string | null;
   groupNameStr: string | null;
   notes: string;
   number: string | null;
@@ -19,7 +19,7 @@ export type TableRowItem = {
   customName: string | null;
   projectDocumentId: number;
   allTags: number;
-  tagsByOrder?: { [order: number]: Tag | undefined };
+  tagsByOrder?: Map<number, Tag>;
 };
 
 export type ExcerptsCount = {
@@ -53,3 +53,13 @@ export type ColumnItem<T> = {
 };
 
 export type TableColumn<T> = ColumnItem<T> | number;
+
+export type TableProps<T> = {
+  data: TableData<T>;
+  leftColumns: ColumnItem<T>[];
+  rightColumns: ColumnItem<T>[];
+};
+
+export type NormalizeDocuments = (TableRowItem & {
+  tagsByOrder: Map<number, Tag>;
+})[];

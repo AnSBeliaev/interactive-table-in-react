@@ -7,6 +7,7 @@
     align-items: center;
     justify-content: center;
     border: 1px solid var(--border);
+    border-right: none;
 }
 
 .table-cell-name {
@@ -15,6 +16,7 @@
     overflow: hidden;
     white-space: nowrap;
     border: 1px solid var(--border);
+    border-left: none;
     background-color: var(--table-tag-bg);
     color: var(--cell-text);
 
@@ -25,9 +27,13 @@
 
 .table-cell-name div {
     width: 90%;
+    text-align: left;
+}
+
+.table-cell-name div p {
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: left;
+    user-select: none;
 }
 
 .table-cell-tag {
@@ -45,6 +51,10 @@
     background-color: var(--table-tag-bg);
 }
 
+.table-cell-selected-tag {
+  background-color: var(--selected-cell);
+}
+
 .table-cell-allTags {
     flex: 1;
     height: 60px;
@@ -55,15 +65,65 @@
     background-color: var(--table-tag-bg);
 }
 
+.table-cell-allTags.table-cell-selected-tag,
+.table-cell-groupNameStr.table-cell-selected-tag,
+.table-cell-notes.table-cell-selected-tag,
+.table-cell-tag.table-cell-selected-tag,
+.table-cell-view.table-cell-selected-tag,
+.table-cell-name.table-cell-selected-tag {
+  background-color: var(--selected-cell);
+}
+
 .table-cell-allTags .inner-table-cell {
-   width: 95%;
+   width: 90%;
+}
+
+.table-cell-groupNameStr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 2;
+    height: 60px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background-color: var(--table-tag-bg);
+    color: var(--cell-text);
+}
+
+.table-cell-groupNameStr div {
+    width: 90%;
+    text-align: left;
+}
+
+.table-cell-groupNameStr div p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none;
 }
 
 .table-cell-notes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     flex: 2;
     height: 60px;
     border: 1px solid var(--border);
     background-color: var(--table-tag-bg);
+    color: var(--cell-text);
+}
+
+.table-cell-notes div {
+    width: 90%;
+    text-align: left;
+}
+
+.table-cell-notes div p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
 }
 
 .table-row {
@@ -82,4 +142,9 @@
     justify-content: center;
     font-weight: 700;
     color: var(--cell-text);
+    cursor: default;
+}
+
+.inner-table-cell p {
+    user-select: none;
 }

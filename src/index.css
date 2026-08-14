@@ -2,6 +2,7 @@
   --text: #6b6375;
   --full-tag-bg-color: #66b8ee;
   --dark-text: #292624;
+  --selected-cell: #ffff80;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -36,6 +37,8 @@
   --td-light-bg: #F8FAFC;
   --border: #e4e8ec;
   --table-tag-bg: #fff;
+  --tag-heat-min-color: #f3f9fd;
+  --full-tag-bg-color: #66b8ee;
   --cell-text: #292624;
   --head-cell-text: #738296;
 }
@@ -45,6 +48,8 @@
   --td-light-bg: #3f454d;
   --border: #3e444c;
   --table-tag-bg: #282e34;
+  --tag-heat-min-color: #282e34;
+  --full-tag-bg-color: #66b8ee;
   --cell-text: #e2e6eb;
   --head-cell-text: #b3bfcc;
 }
