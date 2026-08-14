@@ -5,3 +5,4 @@ export { useGetSelectedIdsByRow } from './useGetSelectedIdsByRow';
 export { useGetMinAndMaxExcerpt } from './useGetMinAndMaxExcerpt';
 export { useGetScrollbarGutter } from './useGetScrollbarGutter';
 export { useGetSums } from './useGetSums';
+export { useGetStatistic } from './useGetStatistic';

@@ -216,3 +216,12 @@ export const getScrollbarWidth = (): number => {
   outer.parentNode?.removeChild(outer);
   return scrollbarWidth;
 };
+
+export const getRowAndColumnIds = (id: string) => {
+  const sep = id.lastIndexOf('-');
+  if (sep === -1) return { columnId: null, rowId: null };
+
+  const columnId = id.slice(0, sep);
+  const rowId = Number(id.slice(sep + 1));
+  return { columnId, rowId };
+};

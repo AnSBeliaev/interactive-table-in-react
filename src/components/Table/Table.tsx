@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { TableRow, TableHead, TableFooterCell, TableStatistic } from './components';
 import {
@@ -9,6 +9,7 @@ import {
   useNormalizeDocuments,
   useSyncScroll,
   useTableSelection,
+  useGetStatistic,
 } from './hooks';
 import { useSelection, useTheme } from '../../constext';
 
@@ -24,6 +25,9 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
   const normalizedDocuments = useNormalizeDocuments({ documents });
 
   const { selectedIds } = useSelection();
+
+  const { selectedCells, selectedRows, selectedColumns } = useGetStatistic(selectedIds);
+
   const { scrollbarGutter, viewportRef } = useGetScrollbarGutter(normalizedDocuments);
   const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
 
@@ -206,9 +210,9 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
         </div>
       </div>
       <TableStatistic
-        numberOfCells={selectedIds.size}
-        // numberOfRows={rowIds.length}
-        // numberOfColumns={columnIds.length}
+        numberOfCells={selectedCells.size}
+        numberOfRows={selectedRows.size}
+        numberOfColumns={selectedColumns.size}
       />
     </>
   );
