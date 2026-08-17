@@ -5,7 +5,7 @@ import { TableCell } from '../TableCell';
 
 type TableRowProps<T> = {
   data: T;
-  columns: TableColumn<T>[];
+  columns?: TableColumn[];
   getCellBackground?: ({ value }: { value: string }) => string;
   handleCellClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => void;
   handleMouseDown?: (event: React.MouseEvent<Element, MouseEvent>, currentId?: string) => void;
@@ -25,16 +25,21 @@ export const TableRow = memo(
   }: TableRowProps<T>) => {
     return (
       <div className={styles['table-row']}>
-        {columns.map((column) => {
+        {columns?.map((column) => {
           const cellId = typeof column === 'number' ? `${column}-${data.id}` : `${column.id}-${data.id}`;
           const isTag = typeof column === 'number';
           const hasInnerBackground = typeof column === 'number' || column.id === 'allTags';
-          const value =
-            typeof column !== 'number'
-              ? column.dataIndex
-                ? data[column.dataIndex]
-                : ''
-              : (data.tagsByOrder?.get(column)?.allExcerpt ?? '');
+          let value;
+
+          if (typeof column !== 'number') {
+            if (column.dataIndex) {
+              value = data[column.dataIndex as keyof T];
+            } else {
+              value = '';
+            }
+          } else {
+            value = data.tagsByOrder?.get(column)?.allExcerpt ?? '';
+          }
 
           return (
             <TableCell

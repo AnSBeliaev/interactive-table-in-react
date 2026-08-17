@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styles from '../TableRow/TableRow.module.css';
 
-type TableCellColumn = number | { id: string };
+type TableCellColumn = number | { id: string | number };
 
 type TableCellProps = {
   isSelected?: boolean;

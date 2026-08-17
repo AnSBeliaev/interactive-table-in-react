@@ -32,7 +32,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
   const { scrollbarGutter, viewportRef } = useGetScrollbarGutter(normalizedDocuments);
   const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
 
-  const dynamicColumns = useMemo(() => tagsForHeader.map((tag) => tag.order), [tagsForHeader]);
+  const dynamicColumns = useMemo(() => tagsForHeader?.map((tag) => tag.order), [tagsForHeader]);
   const { allExcerptSums, allTagsSum } = useGetSums(normalizedDocuments);
   const { minAllExcerpt, maxAllExcerpt } = useGetMinAndMaxExcerpt(normalizedDocuments);
 
@@ -42,7 +42,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
   );
 
   const columns = useMemo(
-    () => [...leftColumns, ...dynamicColumns, ...rightColumns],
+    () => [...leftColumns, ...(dynamicColumns ?? []), ...rightColumns],
     [leftColumns, dynamicColumns, rightColumns],
   );
 
@@ -77,7 +77,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
           <div className={styles['table-header']}>
             <div className={styles['header-left']}>
               {leftColumns.map((headItem) => {
-                return <TableHead key={headItem.id} item={headItem.title} className={headItem.id} />;
+                return <TableHead key={headItem.id} item={headItem.title} className={String(headItem.id)} />;
               })}
             </div>
             <div
@@ -91,7 +91,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
               }
               className={styles['header-mid']}
             >
-              {data.tagsForHeader.map((tag) => (
+              {data.tagsForHeader?.map((tag) => (
                 <TableHead
                   key={tag.order}
                   item={String(tag.order + 1)}
@@ -102,7 +102,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
             </div>
             <div className={styles['header-right']}>
               {rightColumns.map((headItem) => {
-                return <TableHead key={headItem.dataIndex} item={headItem.title} className={headItem.id} />;
+                return <TableHead key={headItem.dataIndex} item={headItem.title} className={String(headItem.id)} />;
               })}
             </div>
             {scrollbarGutter > 0 && <div className={styles['scrollbar-spacer']} style={{ width: scrollbarGutter }} />}
@@ -179,7 +179,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
               }
               className={styles['footer-mid']}
             >
-              {tagsForHeader.map((tag) => {
+              {tagsForHeader?.map((tag) => {
                 return (
                   <TableFooterCell
                     columnId={tag.order}
@@ -203,7 +203,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                   key={column.id}
                   value={column.id === 'allTags' ? allTagsSum : null}
                   onClick={column.id === 'allTags' ? handleFooterAlltagsCellClick : null}
-                  className={column.id}
+                  className={String(column.id)}
                   isTableTag
                   isSelected={selectedIds.has(`${column.id}-footer`)}
                   onMouseMove={handleMouseMove}

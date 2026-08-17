@@ -18,7 +18,8 @@ export type TableRowItem = {
   status: string;
   customName: string | null;
   projectDocumentId: number;
-  allTags: number;
+  allTags?: number;
+  allClaims?: number;
   tagsByOrder?: Map<number, Tag>;
 };
 
@@ -42,22 +43,22 @@ export type TagsForHeader = {
 
 export type TableData<T> = {
   documents: T[];
-  excerptsCount: ExcerptsCount[];
-  tagsForHeader: TagsForHeader[];
+  excerptsCount?: ExcerptsCount[];
+  tagsForHeader?: TagsForHeader[];
 };
 
-export type ColumnItem<T> = {
+export type ColumnItem = {
   title: string;
-  dataIndex?: keyof T;
-  id: string;
+  dataIndex?: string;
+  id: string | number;
 };
 
-export type TableColumn<T> = ColumnItem<T> | number;
+export type TableColumn = ColumnItem | number;
 
 export type TableProps<T> = {
   data: TableData<T>;
-  leftColumns: ColumnItem<T>[];
-  rightColumns: ColumnItem<T>[];
+  leftColumns: ColumnItem[];
+  rightColumns: ColumnItem[];
 };
 
 export type NormalizedDocuments = (TableRowItem & {

@@ -22,6 +22,11 @@
     color: var(--head-cell-text) !important;
 }
 
+.head-allClaims {
+    flex: 1;
+    color: var(--head-cell-text) !important;
+}
+
 .head-groupNameStr {
     flex: 2;
     color: var(--head-cell-text) !important;
