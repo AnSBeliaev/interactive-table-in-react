@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useSelection } from '../../../constext';
 import type { ColumnItem } from '../types';
 import {
@@ -18,7 +18,8 @@ type UseTableSelectionArgs<T> = {
 };
 
 export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSelectionArgs<T>) => {
-  const { selectedIds, dispatch, setAnchorId, anchorId, isDragging, setIsDragging } = useSelection();
+  const [isDragging, setIsDragging] = useState(false);
+  const { selectedIds, dispatch, setAnchorId, anchorId } = useSelection();
 
   const tagColumnIds = useMemo(
     () => columns.filter((column): column is number => typeof column === 'number'),
