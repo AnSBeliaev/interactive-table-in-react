@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { getScrollbarWidth } from '../helpers';
-import type { NormalizeDocuments } from '../types';
+import type { NormalizedDocuments } from '../types';
 
-export const useGetScrollbarGutter = (normalizedDocuments: NormalizeDocuments) => {
+export const useGetScrollbarGutter = (normalizedDocuments: NormalizedDocuments) => {
   const [scrollbarGutter, setScrollbarGutter] = useState(0);
   const viewportRef = useRef<HTMLDivElement>(null);
 

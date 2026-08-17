@@ -6,23 +6,24 @@ import {
   useGetMinAndMaxExcerpt,
   useGetScrollbarGutter,
   useGetSelectedIdsByRow,
-  useNormalizeDocuments,
+  useNormalizedDocuments,
   useSyncScroll,
   useTableSelection,
   useGetStatistic,
+  useGetSumOfCells,
 } from './hooks';
 import { useSelection, useTheme } from '../../constext';
 
 import styles from './Table.module.css';
 
-import type { TableRowItem, TableProps } from './types';
+import type { TableRowItem, TableProps, NormalizedDocuments } from './types';
 import { createGetCellBackground } from './helpers';
 import { EMPTY_SELECTED_CELL_IDS } from './constants';
 
 export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowItem>) => {
   const { isDark } = useTheme();
   const { documents, tagsForHeader } = data;
-  const normalizedDocuments = useNormalizeDocuments({ documents });
+  const normalizedDocuments: NormalizedDocuments = useNormalizedDocuments({ documents });
 
   const { selectedIds } = useSelection();
 
@@ -50,6 +51,8 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
     () => columns.map((column) => (typeof column === 'number' ? column : column.id)),
     [columns],
   );
+
+  const sumOfCells = useGetSumOfCells({ normalizedDocuments, selectedIds });
 
   const {
     handleFooterCellClick,
@@ -216,6 +219,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
         numberOfCells={selectedCells.size}
         numberOfRows={selectedRows.size}
         numberOfColumns={selectedColumns.size}
+        sumOfCells={sumOfCells}
       />
     </>
   );

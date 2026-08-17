@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { TableRowItem, Tag } from '../types';
 
-type UseNormalizeDocumentsArgs<T> = {
+type UseNormalizedDocumentsArgs<T> = {
   documents: T[];
 };
 
@@ -9,7 +9,7 @@ const isTag = (value: unknown): value is Tag => {
   return Boolean(value && typeof value === 'object' && !Array.isArray(value) && 'allExcerpt' in value);
 };
 
-export const useNormalizeDocuments = <T extends TableRowItem>({ documents }: UseNormalizeDocumentsArgs<T>) => {
+export const useNormalizedDocuments = <T extends TableRowItem>({ documents }: UseNormalizedDocumentsArgs<T>) => {
   return useMemo(() => {
     return documents.map((document) => {
       const tagsByOrder = new Map<number, Tag>([]);

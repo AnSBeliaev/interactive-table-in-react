@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import type { NormalizeDocuments } from '../types';
+import type { NormalizedDocuments } from '../types';
 
-export const useGetMinAndMaxExcerpt = (normalizedDocuments: NormalizeDocuments) => {
+export const useGetMinAndMaxExcerpt = (normalizedDocuments: NormalizedDocuments) => {
   const { minAllExcerpt, maxAllExcerpt } = useMemo(() => {
     let minAllExcerpt: number | null = null;
     let maxAllExcerpt: number | null = null;

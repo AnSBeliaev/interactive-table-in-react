@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import type { NormalizeDocuments } from '../types';
+import type { NormalizedDocuments } from '../types';
 
-export const useGetSums = (normalizedDocuments: NormalizeDocuments) => {
+export const useGetSums = (normalizedDocuments: NormalizedDocuments) => {
   const allExcerptSums = useMemo(() => {
     const sums: Record<number, number> = {};
 

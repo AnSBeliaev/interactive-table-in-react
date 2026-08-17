@@ -60,6 +60,6 @@ export type TableProps<T> = {
   rightColumns: ColumnItem<T>[];
 };
 
-export type NormalizeDocuments = (TableRowItem & {
+export type NormalizedDocuments = (TableRowItem & {
   tagsByOrder: Map<number, Tag>;
 })[];
