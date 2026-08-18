@@ -1,25 +1,40 @@
 import { useMemo } from 'react';
-import type { NormalizedDocuments } from '../types';
+import type { NormalizedDocuments, TableRowItem } from '../types';
 
 type UseGetSumOfCellsArgs = {
   normalizedDocuments: NormalizedDocuments;
   selectedIds: Set<string>;
+  documents: TableRowItem[];
+  isBigData?: boolean;
 };
 
-export const useGetSumOfCells = ({ normalizedDocuments, selectedIds }: UseGetSumOfCellsArgs) => {
+export const useGetSumOfCells = ({ normalizedDocuments, selectedIds, documents, isBigData }: UseGetSumOfCellsArgs) => {
   return useMemo(() => {
-    return normalizedDocuments.reduce((sum, row) => {
-      if (row.tagsByOrder && row.tagsByOrder instanceof Map) {
-        row.tagsByOrder.forEach((cellValue, order) => {
-          const compositeId = `${order}-${row.id}`;
+    if (!isBigData) {
+      return normalizedDocuments.reduce((sum, row) => {
+        if (row.tagsByOrder) {
+          row.tagsByOrder.forEach((cellValue, order) => {
+            const compositeId = `${order}-${row.id}`;
 
-          if (selectedIds.has(compositeId)) {
-            const valueToAdd = Number(cellValue.allExcerpt || 0);
-            sum += valueToAdd;
-          }
-        });
-      }
+            if (selectedIds.has(compositeId)) {
+              const valueToAdd = Number(cellValue.allExcerpt || 0);
+              sum += valueToAdd;
+            }
+          });
+        }
+        return sum;
+      }, 0);
+    }
+    return documents.reduce((sum, row) => {
+      row.claims?.forEach((cellValue, order) => {
+        const compositeId = `${order}-${row.id}`;
+
+        if (selectedIds.has(compositeId)) {
+          const valueToAdd = Number(cellValue.allExcerpts || 0);
+          sum += valueToAdd;
+        }
+      });
       return sum;
     }, 0);
-  }, [normalizedDocuments, selectedIds]);
+  }, [normalizedDocuments, selectedIds, documents, isBigData]);
 };

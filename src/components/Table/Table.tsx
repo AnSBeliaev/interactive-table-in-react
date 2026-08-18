@@ -81,7 +81,7 @@ export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps
     [columns],
   );
 
-  const sumOfCells = useGetSumOfCells({ normalizedDocuments, selectedIds });
+  const sumOfCells = useGetSumOfCells({ normalizedDocuments, selectedIds, isBigData, documents });
 
   const {
     handleFooterCellClick,
