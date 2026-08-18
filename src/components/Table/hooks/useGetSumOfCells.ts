@@ -13,8 +13,8 @@ export const useGetSumOfCells = ({ normalizedDocuments, selectedIds, documents, 
     if (!isBigData) {
       return normalizedDocuments.reduce((sum, row) => {
         if (row.tagsByOrder) {
-          row.tagsByOrder.forEach((cellValue, order) => {
-            const compositeId = `${order}-${row.id}`;
+          row.tagsByOrder.forEach((cellValue, index) => {
+            const compositeId = `${index}-${row.id}`;
 
             if (selectedIds.has(compositeId)) {
               const valueToAdd = Number(cellValue.allExcerpt || 0);
@@ -26,8 +26,8 @@ export const useGetSumOfCells = ({ normalizedDocuments, selectedIds, documents, 
       }, 0);
     }
     return documents.reduce((sum, row) => {
-      row.claims?.forEach((cellValue, order) => {
-        const compositeId = `${order}-${row.id}`;
+      row.claims?.forEach((cellValue) => {
+        const compositeId = `${cellValue.order}-${row.id}`;
 
         if (selectedIds.has(compositeId)) {
           const valueToAdd = Number(cellValue.allExcerpts || 0);
