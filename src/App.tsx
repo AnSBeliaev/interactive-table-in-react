@@ -13,7 +13,8 @@ function App() {
       <ThemeProvider>
         <ToggleSwitch />
         <SelectionProvider>
-          <Table data={mockData.data} leftColumns={STATIC_LEFT_COLUMNS} rightColumns={rightColumns} />
+          <Table data={mockData.data} leftColumns={STATIC_LEFT_COLUMNS} rightColumns={rightColumns} isBigData />
+          {/* <Table data={mockData.data} leftColumns={STATIC_LEFT_COLUMNS} rightColumns={rightColumns} /> */}
         </SelectionProvider>
       </ThemeProvider>
     </>

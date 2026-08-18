@@ -20,11 +20,14 @@ import type { TableRowItem, TableProps, NormalizedDocuments } from './types';
 import { createGetCellBackground } from './helpers';
 import { EMPTY_SELECTED_CELL_IDS } from './constants';
 
-export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowItem>) => {
+export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps<TableRowItem>) => {
   const { isDark } = useTheme();
   const { documents, tagsForHeader } = data;
   const normalizedDocuments: NormalizedDocuments = useNormalizedDocuments({ documents });
 
+  const tableData = useMemo(() => {
+    return !isBigData ? normalizedDocuments : documents;
+  }, [isBigData, normalizedDocuments, documents]);
   const { selectedIds } = useSelection();
 
   const { selectedCells, selectedRows, selectedColumns } = useGetStatistic(selectedIds);
@@ -32,9 +35,35 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
   const { scrollbarGutter, viewportRef } = useGetScrollbarGutter(normalizedDocuments);
   const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
 
-  const dynamicColumns = useMemo(() => tagsForHeader?.map((tag) => tag.order), [tagsForHeader]);
-  const { allExcerptSums, allTagsSum } = useGetSums(normalizedDocuments);
-  const { minAllExcerpt, maxAllExcerpt } = useGetMinAndMaxExcerpt(normalizedDocuments);
+  const dynamicColumns = useMemo(() => {
+    if (!isBigData && tagsForHeader) {
+      return tagsForHeader.map((tag) => tag.order);
+    } else {
+      let numberOfColumns = 0;
+      documents.forEach((document) => {
+        if (document.claims && document.claims.length > numberOfColumns) {
+          numberOfColumns = document.claims.length;
+        }
+      });
+      const columns = Array.from({ length: numberOfColumns }, (_, index) => index);
+      return columns;
+    }
+  }, [tagsForHeader, isBigData, documents]);
+
+  const bigDataTagsForHeader = dynamicColumns.map((column) => {
+    return {
+      id: column,
+      order: column,
+      color: '',
+    };
+  });
+  const midData = isBigData ? bigDataTagsForHeader : data.tagsForHeader;
+
+  const { allExcerptSums, allTagsSum } = useGetSums({ data: isBigData ? documents : normalizedDocuments, isBigData });
+  const { minAllExcerpt, maxAllExcerpt } = useGetMinAndMaxExcerpt({
+    data: isBigData ? documents : normalizedDocuments,
+    isBigData,
+  });
 
   const getCellBackground = useMemo(
     () => createGetCellBackground({ min: minAllExcerpt, max: maxAllExcerpt, isDark }),
@@ -42,7 +71,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
   );
 
   const columns = useMemo(
-    () => [...leftColumns, ...(dynamicColumns ?? []), ...rightColumns],
+    () => [...leftColumns, ...dynamicColumns, ...rightColumns],
     [leftColumns, dynamicColumns, rightColumns],
   );
 
@@ -91,7 +120,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
               }
               className={styles['header-mid']}
             >
-              {data.tagsForHeader?.map((tag) => (
+              {midData?.map((tag) => (
                 <TableHead
                   key={tag.order}
                   item={String(tag.order + 1)}
@@ -132,9 +161,11 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 }
                 className={styles['body-mid']}
               >
-                {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
+                {tableData?.map((tableRowItem: TableRowItem) => {
                   return (
                     <TableRow
+                      isMid
+                      isBigData={isBigData}
                       key={tableRowItem.id}
                       data={tableRowItem}
                       columns={dynamicColumns}
@@ -179,7 +210,7 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
               }
               className={styles['footer-mid']}
             >
-              {tagsForHeader?.map((tag) => {
+              {midData?.map((tag) => {
                 return (
                   <TableFooterCell
                     columnId={tag.order}
@@ -201,8 +232,8 @@ export const Table = ({ data, leftColumns, rightColumns }: TableProps<TableRowIt
                 <TableFooterCell
                   columnId={column.id}
                   key={column.id}
-                  value={column.id === 'allTags' ? allTagsSum : null}
-                  onClick={column.id === 'allTags' ? handleFooterAlltagsCellClick : null}
+                  value={column.id === 'allTags' || column.id === 'allClaims' ? allTagsSum : null}
+                  onClick={column.id === 'allTags' || column.id === 'allClaims' ? handleFooterAlltagsCellClick : null}
                   className={String(column.id)}
                   isTableTag
                   isSelected={selectedIds.has(`${column.id}-footer`)}

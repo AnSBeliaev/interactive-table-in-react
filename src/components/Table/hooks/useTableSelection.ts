@@ -11,13 +11,13 @@ import {
   syncSelectedRows,
 } from '../helpers';
 
-type UseTableSelectionArgs<T> = {
-  columns: (number | ColumnItem<T>)[];
+type UseTableSelectionArgs = {
+  columns: (number | ColumnItem)[];
   columnIds: (string | number)[];
   rowIds: number[];
 };
 
-export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSelectionArgs<T>) => {
+export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelectionArgs) => {
   const [isDragging, setIsDragging] = useState(false);
   const { selectedIds, dispatch, setAnchorId, anchorId } = useSelection();
 
@@ -353,7 +353,7 @@ export const useTableSelection = <T>({ columnIds, rowIds, columns }: UseTableSel
         const currentColumnOrder = currentId.slice(0, currentSep);
         const anchorColumnOrder = anchorIdRef.current.slice(0, anchorSep);
 
-        if (currentColumnOrder === 'allTags') {
+        if (currentColumnOrder === 'allTags' || currentColumnOrder === 'allClaims') {
           selectColumns({
             anchorColumnOrder: Number(anchorColumnOrder),
             currentColumnOrder: tagColumnIdsRef.current.length - 1,

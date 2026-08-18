@@ -6,6 +6,12 @@ export type Tag = {
   allExcerpt: string;
 };
 
+export type Claim = {
+  id: number;
+  order: number;
+  allExcerpts: number;
+};
+
 export type TableRowItem = {
   id: number;
   name: string | null;
@@ -21,6 +27,8 @@ export type TableRowItem = {
   allTags?: number;
   allClaims?: number;
   tagsByOrder?: Map<number, Tag>;
+
+  claims?: Claim[];
 };
 
 export type ExcerptsCount = {
@@ -59,6 +67,7 @@ export type TableProps<T> = {
   data: TableData<T>;
   leftColumns: ColumnItem[];
   rightColumns: ColumnItem[];
+  isBigData?: boolean;
 };
 
 export type NormalizedDocuments = (TableRowItem & {

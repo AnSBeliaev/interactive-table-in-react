@@ -35,7 +35,7 @@ export const TableCell = memo(
         className={`${styles[`table-cell-${columnClassName}`]} ${isSelected ? styles['table-cell-selected-tag'] : ''}`}
         onClick={(event) => {
           if (!handleCellClick) return;
-          if (!isTag && column.id !== 'allTags') return;
+          if (!isTag && column.id !== 'allTags' && column.id !== 'allClaims') return;
           if (!cellId) return;
           handleCellClick(event, cellId);
         }}

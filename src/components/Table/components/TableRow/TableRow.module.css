@@ -55,16 +55,7 @@
   background-color: var(--selected-cell);
 }
 
-.table-cell-allTags {
-    flex: 1;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border);
-    background-color: var(--table-tag-bg);
-}
-
+.table-cell-allTags,
 .table-cell-allClaims {
     flex: 1;
     height: 60px;
@@ -85,7 +76,8 @@
   background-color: var(--selected-cell);
 }
 
-.table-cell-allTags .inner-table-cell {
+.table-cell-allTags .inner-table-cell,
+.table-cell-allClaims .inner-table-cell {
    width: 90%;
 }
 

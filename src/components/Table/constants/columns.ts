@@ -7,7 +7,7 @@ export const STATIC_LEFT_COLUMNS: ColumnItem[] = [
   },
   {
     title: 'Document',
-    dataIndex: 'name',
+    dataIndex: 'customName',
     id: 'name',
   },
 ];
