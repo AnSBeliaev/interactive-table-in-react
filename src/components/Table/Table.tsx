@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 
 import { TableHead, TableStatistic, TableBody } from './components';
 import { useGetScrollbarGutter, useNormalizedDocuments, useSyncScroll } from './hooks';
@@ -8,7 +8,7 @@ import styles from './Table.module.css';
 
 import type { TableRowItem, TableProps, NormalizedDocuments } from './types';
 
-export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps<TableRowItem>) => {
+export const Table = memo(({ data, leftColumns, rightColumns, isBigData }: TableProps<TableRowItem>) => {
   const { isDark } = useTheme();
   const { documents, tagsForHeader } = data;
   const normalizedDocuments: NormalizedDocuments = useNormalizedDocuments({ documents });
@@ -101,4 +101,4 @@ export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps
       <TableStatistic normalizedDocuments={normalizedDocuments} isBigData={isBigData} documents={documents} />
     </>
   );
-};
+});

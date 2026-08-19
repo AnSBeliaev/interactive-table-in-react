@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useSelection } from '../../../../constext';
 import { EMPTY_SELECTED_CELL_IDS } from '../../constants';
 import { useGetSelectedIdsByRow } from '../../hooks';
@@ -10,7 +11,7 @@ type TableBodyLeftArgs = {
   leftColumns: ColumnItem[];
 };
 
-export const TableBodyLeft = ({ tableData, leftColumns }: TableBodyLeftArgs) => {
+export const TableBodyLeft = memo(({ tableData, leftColumns }: TableBodyLeftArgs) => {
   const { selectedIds } = useSelection();
   const selectedSideIdsByRow = useGetSelectedIdsByRow(selectedIds, false);
   return (
@@ -27,4 +28,4 @@ export const TableBodyLeft = ({ tableData, leftColumns }: TableBodyLeftArgs) => 
       })}
     </div>
   );
-};
+});
