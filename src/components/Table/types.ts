@@ -79,3 +79,6 @@ export type HandleScrollArgs<T> = {
   firstTargetRef: React.RefObject<T | null>;
   secondTargetRef: React.RefObject<T | null>;
 };
+
+export type SelectionAction =
+  { type: 'add'; id: string } | { type: 'remove'; id: string } | { type: 'set'; ids: Set<string> } | { type: 'clear' };

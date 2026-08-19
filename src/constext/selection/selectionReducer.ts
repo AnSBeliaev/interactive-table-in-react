@@ -1,5 +1,4 @@
-export type SelectionAction =
-  { type: 'add'; id: string } | { type: 'remove'; id: string } | { type: 'set'; ids: Set<string> } | { type: 'clear' };
+import type { SelectionAction } from '../../components/Table/types';
 
 export const selectionReducer = (selectedIds: Set<string>, action: SelectionAction) => {
   const actionType = action.type;

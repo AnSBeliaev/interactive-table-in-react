@@ -1,63 +1,57 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { SetStateAction } from 'react';
 import { selectionReducer } from './selectionReducer';
+import type { SelectionAction } from '../../components/Table/types';
 
 export type SelectionState = {
   selectedIds: Set<string>;
   anchorId: string;
 };
 
-export type SelectionAction =
-  { type: 'add'; id: string } | { type: 'remove'; id: string } | { type: 'set'; ids: Set<string> } | { type: 'clear' };
+let state: SelectionState = {
+  selectedIds: new Set<string>(),
+  anchorId: '',
+};
 
-class SelectionStore {
-  private state: SelectionState = {
-    selectedIds: new Set<string>(),
-    anchorId: '',
-  };
+const listeners = new Set<() => void>();
 
-  private listeners = new Set<() => void>();
+const emit = () => {
+  listeners.forEach((listener) => listener());
+};
 
-  getState = () => {
-    return this.state;
-  };
+export const selectionStore = {
+  getState: () => state,
 
-  subscribe = (listener: () => void) => {
-    this.listeners.add(listener);
+  subscribe: (listener: () => void) => {
+    listeners.add(listener);
 
     return () => {
-      this.listeners.delete(listener);
+      listeners.delete(listener);
     };
-  };
+  },
 
-  dispatch: Dispatch<SelectionAction> = (action) => {
-    const selectedIds = selectionReducer(this.state.selectedIds, action);
+  dispatch: (action: SelectionAction) => {
+    const selectedIds = selectionReducer(state.selectedIds, action);
 
-    this.state = {
-      ...this.state,
+    state = {
+      ...state,
       selectedIds,
     };
 
-    this.emit();
-  };
+    emit();
+  },
 
-  setAnchorId = (value: SetStateAction<string>) => {
-    const anchorId = typeof value === 'function' ? value(this.state.anchorId) : value;
+  setAnchorId: (value: SetStateAction<string>) => {
+    const anchorId = typeof value === 'function' ? value(state.anchorId) : value;
 
-    if (anchorId === this.state.anchorId) {
+    if (anchorId === state.anchorId) {
       return;
     }
 
-    this.state = {
-      ...this.state,
+    state = {
+      ...state,
       anchorId,
     };
 
-    this.emit();
-  };
-
-  private emit = () => {
-    this.listeners.forEach((listener) => listener());
-  };
-}
-
-export const selectionStore = new SelectionStore();
+    emit();
+  },
+};

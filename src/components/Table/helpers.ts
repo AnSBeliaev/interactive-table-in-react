@@ -1,4 +1,4 @@
-import type { SelectionAction } from '../../constext/selection/SelectionContext';
+import type { SelectionAction } from './types';
 
 type GetPercentageArgs = {
   min: number;
