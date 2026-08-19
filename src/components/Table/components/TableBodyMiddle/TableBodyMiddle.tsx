@@ -1,4 +1,4 @@
-import type { HandleScrollArgs, TableRowItem } from '../../types';
+import type { TableRowItem } from '../../types';
 import { TableRow } from '../TableRow';
 
 import styles from './TableBodyMiddle.module.css';
@@ -7,7 +7,6 @@ type TableBodyMiddleArgs = {
   bodyScrollRef: React.RefObject<HTMLDivElement | null>;
   headerScrollRef: React.RefObject<HTMLDivElement | null>;
   footerScrollRef: React.RefObject<HTMLDivElement | null>;
-  handleScroll: ({ sourceRef, firstTargetRef, secondTargetRef }: HandleScrollArgs<HTMLDivElement>) => void;
   tableData: TableRowItem[];
   isBigData?: boolean;
   dynamicColumns: number[];
@@ -19,9 +18,6 @@ type TableBodyMiddleArgs = {
 
 export const TableBodyMiddle = ({
   bodyScrollRef,
-  headerScrollRef,
-  footerScrollRef,
-  handleScroll,
   tableData,
   isBigData,
   dynamicColumns,
@@ -31,17 +27,7 @@ export const TableBodyMiddle = ({
   handleMouseDown,
 }: TableBodyMiddleArgs) => {
   return (
-    <div
-      ref={bodyScrollRef}
-      onScroll={() =>
-        handleScroll({
-          sourceRef: bodyScrollRef,
-          firstTargetRef: headerScrollRef,
-          secondTargetRef: footerScrollRef,
-        })
-      }
-      className={styles['body-middle']}
-    >
+    <div ref={bodyScrollRef} className={styles['body-middle']}>
       {tableData?.map((tableRowItem: TableRowItem) => {
         return (
           <TableRow

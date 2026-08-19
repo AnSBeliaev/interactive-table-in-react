@@ -18,7 +18,7 @@ export const Table = memo(({ data, leftColumns, rightColumns, isBigData }: Table
   }, [isBigData, normalizedDocuments, documents]);
 
   const { scrollbarGutter, viewportRef } = useGetScrollbarGutter(normalizedDocuments);
-  const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
+  const { headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll();
 
   const dynamicColumns = useMemo(() => {
     if (!isBigData && tagsForHeader) {
@@ -56,17 +56,7 @@ export const Table = memo(({ data, leftColumns, rightColumns, isBigData }: Table
                 return <TableHead key={headItem.id} item={headItem.title} className={String(headItem.id)} />;
               })}
             </div>
-            <div
-              ref={headerScrollRef}
-              onScroll={() =>
-                handleScroll({
-                  sourceRef: headerScrollRef,
-                  firstTargetRef: bodyScrollRef,
-                  secondTargetRef: footerScrollRef,
-                })
-              }
-              className={styles['header-mid']}
-            >
+            <div ref={headerScrollRef} className={styles['header-mid']}>
               {midData?.map((tag) => (
                 <TableHead
                   key={tag.order}
@@ -95,6 +85,9 @@ export const Table = memo(({ data, leftColumns, rightColumns, isBigData }: Table
             isDark={isDark}
             documents={documents}
             midData={midData}
+            bodyScrollRef={bodyScrollRef}
+            headerScrollRef={headerScrollRef}
+            footerScrollRef={footerScrollRef}
           />
         </div>
       </div>

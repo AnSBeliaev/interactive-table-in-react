@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react';
-import { useGetMinAndMaxExcerpt, useGetSums, useSyncScroll, useTableSelection } from '../../hooks';
+import { useGetMinAndMaxExcerpt, useGetSums, useTableSelection } from '../../hooks';
 import type { ColumnItem, NormalizedDocuments, TableRowItem } from '../../types';
 import { TableBodyLeft } from '../TableBodyLeft';
 import { TableBodyMiddle } from '../TableBodyMiddle';
@@ -25,6 +25,9 @@ type TableBodyArgs = {
     order: number;
     color: string;
   }[];
+  bodyScrollRef: React.RefObject<HTMLDivElement | null>;
+  headerScrollRef: React.RefObject<HTMLDivElement | null>;
+  footerScrollRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const TableBody = memo(
@@ -40,9 +43,11 @@ export const TableBody = memo(
     isBigData,
     isDark,
     midData,
+    bodyScrollRef,
+    headerScrollRef,
+    footerScrollRef,
   }: TableBodyArgs) => {
     const { allExcerptSums, allTagsSum } = useGetSums({ data: isBigData ? documents : normalizedDocuments, isBigData });
-    const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
 
     const columns = useMemo(
       () => [...leftColumns, ...dynamicColumns, ...rightColumns],
@@ -86,7 +91,6 @@ export const TableBody = memo(
               bodyScrollRef={bodyScrollRef}
               headerScrollRef={headerScrollRef}
               footerScrollRef={footerScrollRef}
-              handleScroll={handleScroll}
               tableData={tableData}
               isBigData={isBigData}
               dynamicColumns={dynamicColumns}
@@ -108,17 +112,7 @@ export const TableBody = memo(
           <div className={styles['footer-left']}>
             <TableFooterCell value="All documents" className="documents" />
           </div>
-          <div
-            ref={footerScrollRef}
-            onScroll={() =>
-              handleScroll({
-                sourceRef: footerScrollRef,
-                firstTargetRef: headerScrollRef,
-                secondTargetRef: bodyScrollRef,
-              })
-            }
-            className={styles['footer-mid']}
-          >
+          <div ref={footerScrollRef} className={styles['footer-mid']}>
             {midData?.map((tag) => {
               return (
                 <TableFooterCell

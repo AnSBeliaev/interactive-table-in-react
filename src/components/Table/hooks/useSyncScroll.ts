@@ -1,32 +1,46 @@
-import { useRef, type RefObject } from 'react';
-import type { HandleScrollArgs } from '../types';
+import { useEffect, useRef } from 'react';
 
-export const useSyncScroll = <T>() => {
-  const headerScrollRef = useRef<T | null>(null);
-  const bodyScrollRef = useRef<T | null>(null);
-  const footerScrollRef = useRef<T | null>(null);
+export const useSyncScroll = () => {
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const footerRef = useRef<HTMLDivElement | null>(null);
 
-  const activeSourceRef = useRef<RefObject<HTMLDivElement | null> | null>(null);
-  const handleScroll = ({ sourceRef, firstTargetRef, secondTargetRef }: HandleScrollArgs<HTMLDivElement>) => {
-    if (activeSourceRef.current && activeSourceRef.current !== sourceRef) {
-      return;
-    }
+  useEffect(() => {
+    const header = headerRef.current;
+    const body = bodyRef.current;
+    const footer = footerRef.current;
 
-    activeSourceRef.current = sourceRef;
+    if (!header || !body || !footer) return;
+    const elements = [header, body, footer];
+    let isSyncing = false;
 
-    if (firstTargetRef.current && sourceRef.current) {
-      firstTargetRef.current.scrollLeft = sourceRef.current.scrollLeft;
-    }
-    if (secondTargetRef.current && sourceRef.current) {
-      secondTargetRef.current.scrollLeft = sourceRef.current.scrollLeft;
-    }
+    const listeners = elements.map((source) => {
+      const targets = elements.filter((el) => el !== source);
 
-    window.requestAnimationFrame(() => {
-      if (activeSourceRef.current === sourceRef) {
-        activeSourceRef.current = null;
-      }
+      const handleScroll = () => {
+        if (isSyncing) return;
+        isSyncing = true;
+
+        const scrollLeft = source.scrollLeft;
+
+        targets.forEach((target) => {
+          if (target.scrollLeft !== scrollLeft) {
+            target.scrollLeft = scrollLeft;
+          }
+        });
+
+        isSyncing = false;
+      };
+
+      source.addEventListener('scroll', handleScroll, { passive: true });
+
+      return () => source.removeEventListener('scroll', handleScroll);
     });
-  };
 
-  return { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef };
+    return () => {
+      listeners.forEach((cleanUp) => cleanUp());
+    };
+  }, []);
+
+  return { headerScrollRef: headerRef, bodyScrollRef: bodyRef, footerScrollRef: footerRef };
 };
