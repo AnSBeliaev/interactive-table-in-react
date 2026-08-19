@@ -10,6 +10,11 @@
     border: 1px solid var(--border);
 }
 
+.table {
+    display: flex;
+    flex-direction: column;
+}
+
 .table-header {
     display: flex;
 }

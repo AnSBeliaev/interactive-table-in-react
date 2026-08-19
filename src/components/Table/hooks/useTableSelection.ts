@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useSelection } from '../../../constext';
 import type { ColumnItem } from '../types';
 import {
   getCellIdsInRange,
@@ -10,6 +9,7 @@ import {
   syncSelectedRow,
   syncSelectedRows,
 } from '../helpers';
+import { selectionStore } from '../../../constext/selection/selectionStore';
 
 type UseTableSelectionArgs = {
   columns: (number | ColumnItem)[];
@@ -19,15 +19,16 @@ type UseTableSelectionArgs = {
 
 export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelectionArgs) => {
   const [isDragging, setIsDragging] = useState(false);
-  const { selectedIds, dispatch, setAnchorId, anchorId } = useSelection();
+
+  const dispatch = selectionStore.dispatch;
+  const setAnchorId = selectionStore.setAnchorId;
 
   const tagColumnIds = useMemo(
     () => columns.filter((column): column is number => typeof column === 'number'),
     [columns],
   );
 
-  const selectedIdsRef = useRef(selectedIds);
-  const anchorIdRef = useRef(anchorId);
+  const anchorIdRef = useRef(selectionStore.getState().anchorId);
   const isDraggingRef = useRef(isDragging);
   const dragModeRef = useRef('cells');
   const rowIdsRef = useRef(rowIds);
@@ -37,14 +38,14 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
   const mouseDownCellIdRef = useRef('');
   const mouseDownShiftRef = useRef(false);
 
+  const lastHoverIdRef = useRef('');
+
   useLayoutEffect(() => {
-    selectedIdsRef.current = selectedIds;
-    anchorIdRef.current = anchorId;
     isDraggingRef.current = isDragging;
     rowIdsRef.current = rowIds;
     columnIdsRef.current = columnIds;
     tagColumnIdsRef.current = tagColumnIds;
-  }, [selectedIds, anchorId, isDragging, rowIds, columnIds, tagColumnIds]);
+  }, [isDragging, rowIds, columnIds, tagColumnIds]);
 
   const applyCellClickSelection = useCallback(
     (cellId: string, shiftKey: boolean) => {
@@ -78,7 +79,7 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
       if (!cellId || !dispatch || !setAnchorId) return;
       if (!(event.ctrlKey || event.metaKey)) return;
 
-      const currentSelectedIds = selectedIdsRef.current;
+      const currentSelectedIds = selectionStore.getState().selectedIds;
       const tags = tagColumnIdsRef.current;
       const { columnId, rowId } = getRowAndColumnIds(cellId);
 
@@ -122,7 +123,7 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
       const idsForThisRowArray = columnIds.map((columnId) => `${columnId}-${numericRowId}`);
       const idsForThisRowSet = new Set<string>(idsForThisRowArray);
 
-      const selectedIdsNow = selectedIdsRef.current;
+      const selectedIdsNow = selectionStore.getState().selectedIds;
       const isRowFullySelected = idsForThisRowArray.every((id) => selectedIdsNow.has(id));
 
       if (event.ctrlKey || event.metaKey) {
@@ -239,7 +240,7 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
       const idsForThisColumn = rowIds.map((rowId) => `${numericColumnOrder}-${rowId}`);
       const idsForThisColumnWithFooterCell = [...idsForThisColumn, footerId];
       const idsForThisColumnSet = new Set<string>(idsForThisColumnWithFooterCell);
-      const selectedIdsNow = selectedIdsRef.current;
+      const selectedIdsNow = selectionStore.getState().selectedIds;
       const isColumnFullySelected = idsForThisColumnWithFooterCell.every((id) => selectedIdsNow.has(id));
 
       if (event.ctrlKey || event.metaKey) {
@@ -291,6 +292,8 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
     isDraggingRef.current = false;
     setIsDragging(false);
 
+    lastHoverIdRef.current = '';
+
     if (!didDragRef.current && mouseDownCellIdRef.current) {
       applyCellClickSelection(mouseDownCellIdRef.current, mouseDownShiftRef.current);
     }
@@ -308,6 +311,7 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
       didDragRef.current = false;
       mouseDownCellIdRef.current = currentId;
       mouseDownShiftRef.current = event.shiftKey;
+      lastHoverIdRef.current = '';
 
       if (!event.shiftKey) {
         if (currentId.endsWith('footer')) {
@@ -339,6 +343,11 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
 
       didDragRef.current = true;
       if (dragModeRef.current === 'cells') {
+        if (currentId === lastHoverIdRef.current) {
+          return;
+        }
+
+        lastHoverIdRef.current = currentId;
         getCellIdsInRange({
           anchorId: anchorIdRef.current,
           currentId,
@@ -351,6 +360,12 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
         const anchorSep = anchorIdRef.current.lastIndexOf('-');
 
         const currentColumnOrder = currentId.slice(0, currentSep);
+
+        if (currentColumnOrder === lastHoverIdRef.current) {
+          return;
+        }
+
+        lastHoverIdRef.current = currentColumnOrder;
         const anchorColumnOrder = anchorIdRef.current.slice(0, anchorSep);
 
         if (currentColumnOrder === 'allTags' || currentColumnOrder === 'allClaims') {

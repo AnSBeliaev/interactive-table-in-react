@@ -1,7 +1,4 @@
 import { memo } from 'react';
-import { useSelection } from '../../../../constext';
-import { EMPTY_SELECTED_CELL_IDS } from '../../constants';
-import { useGetSelectedIdsByRow } from '../../hooks';
 import type { ColumnItem, TableRowItem } from '../../types';
 import { TableRow } from '../TableRow';
 
@@ -17,8 +14,6 @@ type TableBodyRightArgs = {
 
 export const TableBodyRight = memo(
   ({ tableData, handleAllTagsCellClick, rightColumns, handleMouseMove, getCellBackground }: TableBodyRightArgs) => {
-    const { selectedIds } = useSelection();
-    const selectedSideIdsByRow = useGetSelectedIdsByRow(selectedIds, false);
     return (
       <div className={styles['table-body-right']}>
         {tableData?.map((tableRowItem: TableRowItem) => {
@@ -30,7 +25,6 @@ export const TableBodyRight = memo(
               columns={rightColumns}
               handleMouseMove={handleMouseMove}
               getCellBackground={getCellBackground}
-              selectedCellIds={selectedSideIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
             />
           );
         })}

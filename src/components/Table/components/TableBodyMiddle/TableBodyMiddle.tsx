@@ -1,6 +1,3 @@
-import { useSelection } from '../../../../constext';
-import { EMPTY_SELECTED_CELL_IDS } from '../../constants';
-import { useGetSelectedIdsByRow } from '../../hooks';
 import type { HandleScrollArgs, TableRowItem } from '../../types';
 import { TableRow } from '../TableRow';
 
@@ -33,8 +30,6 @@ export const TableBodyMiddle = ({
   handleMouseMove,
   handleMouseDown,
 }: TableBodyMiddleArgs) => {
-  const { selectedIds } = useSelection();
-  const selectedTagIdsByRow = useGetSelectedIdsByRow(selectedIds, true);
   return (
     <div
       ref={bodyScrollRef}
@@ -59,7 +54,6 @@ export const TableBodyMiddle = ({
             handleCellClick={handleCellClick}
             handleMouseMove={handleMouseMove}
             handleMouseDown={handleMouseDown}
-            selectedCellIds={selectedTagIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
           />
         );
       })}

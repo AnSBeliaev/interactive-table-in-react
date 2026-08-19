@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import styles from './TableFooterCell.module.css';
-import { useSelection } from '../../../../constext';
+import { useSelectionSelector } from '../../../../constext/selection/useSelectionSelector';
 
 type TableFooterProps = {
   value?: string | number | null;
@@ -24,9 +24,9 @@ export const TableFooterCell = memo(
     onMouseDown,
     columnId,
   }: TableFooterProps) => {
-    const { selectedIds } = useSelection();
-    const isSelected = selectedIds.has(`${columnId}-footer`);
     const currentColumnId = columnId != undefined ? String(columnId) : '';
+
+    const isSelected = useSelectionSelector((state) => state.selectedIds.has(`${currentColumnId}-footer`));
     return (
       <div
         data-selected={isSelected}

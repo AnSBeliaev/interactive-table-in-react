@@ -1,10 +1,10 @@
 import { memo } from 'react';
 import styles from './TableCell.module.css';
+import { useSelectionSelector } from '../../../../constext/selection/useSelectionSelector';
 
 type TableCellColumn = number | { id: string | number };
 
 type TableCellProps = {
-  isSelected?: boolean;
   cellId?: string;
   column: TableCellColumn;
   value?: unknown;
@@ -20,7 +20,6 @@ export const TableCell = memo(
     value,
     cellId,
     column,
-    isSelected,
     handleMouseDown,
     handleMouseMove,
     getCellBackground,
@@ -29,6 +28,8 @@ export const TableCell = memo(
   }: TableCellProps) => {
     const isTag = typeof column === 'number';
     const columnClassName = isTag ? 'tag' : column.id;
+
+    const isSelected = useSelectionSelector((state) => (cellId ? state.selectedIds.has(cellId) : false));
 
     return (
       <div

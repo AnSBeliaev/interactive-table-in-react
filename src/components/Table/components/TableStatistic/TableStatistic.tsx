@@ -1,4 +1,4 @@
-import { useSelection } from '../../../../constext';
+import { useSelectionSelector } from '../../../../constext/selection/useSelectionSelector';
 import { useGetStatistic, useGetSumOfCells } from '../../hooks';
 import type { NormalizedDocuments, TableRowItem } from '../../types';
 import styles from './TableStatistic.module.css';
@@ -10,7 +10,7 @@ type TableStatisticProps = {
 };
 
 export const TableStatistic = ({ normalizedDocuments, isBigData, documents }: TableStatisticProps) => {
-  const { selectedIds } = useSelection();
+  const selectedIds = useSelectionSelector((state) => state.selectedIds);
   const { selectedCells, selectedRows, selectedColumns } = useGetStatistic(selectedIds);
 
   const sumOfCells = useGetSumOfCells({ normalizedDocuments, selectedIds, isBigData, documents });

@@ -12,7 +12,6 @@ type TableRowProps<T> = {
   handleCellClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => void;
   handleMouseDown?: (event: React.MouseEvent<Element, MouseEvent>, currentId?: string) => void;
   handleMouseMove?: (currentId?: string) => void;
-  selectedCellIds?: ReadonlySet<string>;
 };
 
 export const TableRow = memo(
@@ -25,7 +24,6 @@ export const TableRow = memo(
     handleCellClick,
     handleMouseDown,
     handleMouseMove,
-    selectedCellIds,
   }: TableRowProps<T>) => {
     const tableCellsData = useMemo(() => new Map(data.claims?.map((claim) => [claim.order, claim])), [data.claims]);
 
@@ -57,7 +55,6 @@ export const TableRow = memo(
               value={value}
               cellId={cellId}
               column={column}
-              isSelected={Boolean(selectedCellIds?.has(cellId))}
               handleMouseDown={handleMouseDown}
               handleMouseMove={handleMouseMove}
               getCellBackground={getCellBackground}
