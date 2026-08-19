@@ -1,0 +1,6 @@
+.table-body-right {
+    flex: 0 0 520px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+}

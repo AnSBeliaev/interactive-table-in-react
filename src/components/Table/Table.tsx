@@ -1,24 +1,27 @@
 import { useMemo } from 'react';
 
-import { TableRow, TableHead, TableFooterCell, TableStatistic } from './components';
+import {
+  TableHead,
+  TableFooterCell,
+  TableStatistic,
+  TableBodyMiddle,
+  TableBodyRight,
+  TableBodyLeft,
+} from './components';
 import {
   useGetSums,
   useGetMinAndMaxExcerpt,
   useGetScrollbarGutter,
-  useGetSelectedIdsByRow,
   useNormalizedDocuments,
   useSyncScroll,
   useTableSelection,
-  useGetStatistic,
-  useGetSumOfCells,
 } from './hooks';
-import { useSelection, useTheme } from '../../constext';
+import { useTheme } from '../../constext';
 
 import styles from './Table.module.css';
 
 import type { TableRowItem, TableProps, NormalizedDocuments } from './types';
 import { createGetCellBackground } from './helpers';
-import { EMPTY_SELECTED_CELL_IDS } from './constants';
 
 export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps<TableRowItem>) => {
   const { isDark } = useTheme();
@@ -28,9 +31,6 @@ export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps
   const tableData = useMemo(() => {
     return !isBigData ? normalizedDocuments : documents;
   }, [isBigData, normalizedDocuments, documents]);
-  const { selectedIds } = useSelection();
-
-  const { selectedCells, selectedRows, selectedColumns } = useGetStatistic(selectedIds);
 
   const { scrollbarGutter, viewportRef } = useGetScrollbarGutter(normalizedDocuments);
   const { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef } = useSyncScroll<HTMLDivElement>();
@@ -81,8 +81,6 @@ export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps
     [columns],
   );
 
-  const sumOfCells = useGetSumOfCells({ normalizedDocuments, selectedIds, isBigData, documents });
-
   const {
     handleFooterCellClick,
     handleAllTagsCellClick,
@@ -95,9 +93,6 @@ export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps
     rowIds,
     columnIds,
   });
-
-  const selectedTagIdsByRow = useGetSelectedIdsByRow(selectedIds, true);
-  const selectedSideIdsByRow = useGetSelectedIdsByRow(selectedIds, false);
 
   return (
     <>
@@ -138,61 +133,27 @@ export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps
           </div>
           <div ref={viewportRef} className={styles['table-viewport']}>
             <div className={styles['table-body']}>
-              <div className={styles['body-left']}>
-                {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-                  return (
-                    <TableRow
-                      key={tableRowItem.id}
-                      data={tableRowItem}
-                      columns={leftColumns}
-                      selectedCellIds={selectedSideIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
-                    />
-                  );
-                })}
-              </div>
-              <div
-                ref={bodyScrollRef}
-                onScroll={() =>
-                  handleScroll({
-                    sourceRef: bodyScrollRef,
-                    firstTargetRef: headerScrollRef,
-                    secondTargetRef: footerScrollRef,
-                  })
-                }
-                className={styles['body-mid']}
-              >
-                {tableData?.map((tableRowItem: TableRowItem) => {
-                  return (
-                    <TableRow
-                      isMid
-                      isBigData={isBigData}
-                      key={tableRowItem.id}
-                      data={tableRowItem}
-                      columns={dynamicColumns}
-                      getCellBackground={getCellBackground}
-                      handleCellClick={handleCellClick}
-                      handleMouseMove={handleMouseMove}
-                      handleMouseDown={handleMouseDown}
-                      selectedCellIds={selectedTagIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
-                    />
-                  );
-                })}
-              </div>
-              <div className={styles['body-right']}>
-                {normalizedDocuments?.map((tableRowItem: TableRowItem) => {
-                  return (
-                    <TableRow
-                      handleCellClick={handleAllTagsCellClick}
-                      key={tableRowItem.id}
-                      data={tableRowItem}
-                      columns={rightColumns}
-                      handleMouseMove={handleMouseMove}
-                      getCellBackground={getCellBackground}
-                      selectedCellIds={selectedSideIdsByRow.get(tableRowItem.id) ?? EMPTY_SELECTED_CELL_IDS}
-                    />
-                  );
-                })}
-              </div>
+              <TableBodyLeft tableData={tableData} leftColumns={leftColumns} />
+              <TableBodyMiddle
+                bodyScrollRef={bodyScrollRef}
+                headerScrollRef={headerScrollRef}
+                footerScrollRef={footerScrollRef}
+                handleScroll={handleScroll}
+                tableData={tableData}
+                isBigData={isBigData}
+                dynamicColumns={dynamicColumns}
+                getCellBackground={getCellBackground}
+                handleCellClick={handleCellClick}
+                handleMouseMove={handleMouseMove}
+                handleMouseDown={handleMouseDown}
+              />
+              <TableBodyRight
+                tableData={tableData}
+                handleAllTagsCellClick={handleAllTagsCellClick}
+                rightColumns={rightColumns}
+                handleMouseMove={handleMouseMove}
+                getCellBackground={getCellBackground}
+              />
             </div>
           </div>
           <div className={styles['table-footer']}>
@@ -221,7 +182,6 @@ export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps
                     value={allExcerptSums[tag.order]}
                     className="tag"
                     isTableTag
-                    isSelected={selectedIds.has(`${tag.order}-footer`)}
                     getCellBackground={getCellBackground}
                   />
                 );
@@ -236,7 +196,6 @@ export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps
                   onClick={column.id === 'allTags' || column.id === 'allClaims' ? handleFooterAlltagsCellClick : null}
                   className={String(column.id)}
                   isTableTag
-                  isSelected={selectedIds.has(`${column.id}-footer`)}
                   onMouseMove={handleMouseMove}
                   getCellBackground={getCellBackground}
                 />
@@ -246,12 +205,7 @@ export const Table = ({ data, leftColumns, rightColumns, isBigData }: TableProps
           </div>
         </div>
       </div>
-      <TableStatistic
-        numberOfCells={selectedCells.size}
-        numberOfRows={selectedRows.size}
-        numberOfColumns={selectedColumns.size}
-        sumOfCells={sumOfCells}
-      />
+      <TableStatistic normalizedDocuments={normalizedDocuments} isBigData={isBigData} documents={documents} />
     </>
   );
 };

@@ -80,27 +80,6 @@
     overflow-y: hidden;
 }
 
-.body-left {
-    height: 60px;
-    max-width: 300px;
-    flex: 0 0 300px;
-    display: flex;
-    flex-direction: column;
-}
-
-.body-mid {
-    display: flex;
-    flex-direction: column;
-    overflow-y: hidden;
-}
-
-.body-right {
-    flex: 0 0 520px;
-    height: 60px;
-    display: flex;
-    flex-direction: column;
-}
-
 .footer-left {
     height: 60px;
     max-width: 300px;
@@ -116,20 +95,17 @@
 }
 
 .header-mid,
-.body-mid,
 .footer-mid {
   flex: 1 0 300px;
   min-width: 0;
   overflow-x: auto;
 }
 
-.header-mid,
-.body-mid {
+.header-mid {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-.header-mid::-webkit-scrollbar,
-.body-mid::-webkit-scrollbar {
+.header-mid::-webkit-scrollbar {
   display: none;
 }

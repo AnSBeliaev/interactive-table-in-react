@@ -1,10 +1,5 @@
 import { useRef, type RefObject } from 'react';
-
-type HandleScrollArgs<T> = {
-  sourceRef: React.RefObject<T | null>;
-  firstTargetRef: React.RefObject<T | null>;
-  secondTargetRef: React.RefObject<T | null>;
-};
+import type { HandleScrollArgs } from '../types';
 
 export const useSyncScroll = <T>() => {
   const headerScrollRef = useRef<T | null>(null);

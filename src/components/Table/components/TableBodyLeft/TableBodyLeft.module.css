@@ -1,0 +1,8 @@
+
+.table-body-left {
+    height: 60px;
+    max-width: 300px;
+    flex: 0 0 300px;
+    display: flex;
+    flex-direction: column;
+}

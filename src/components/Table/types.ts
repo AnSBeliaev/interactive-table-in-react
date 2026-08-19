@@ -73,3 +73,9 @@ export type TableProps<T> = {
 export type NormalizedDocuments = (TableRowItem & {
   tagsByOrder: Map<number, Tag>;
 })[];
+
+export type HandleScrollArgs<T> = {
+  sourceRef: React.RefObject<T | null>;
+  firstTargetRef: React.RefObject<T | null>;
+  secondTargetRef: React.RefObject<T | null>;
+};

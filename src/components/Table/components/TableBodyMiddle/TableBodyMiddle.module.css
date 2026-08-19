@@ -1,0 +1,20 @@
+.body-middle {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+}
+
+.body-middle {
+  flex: 1 0 300px;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.body-middle {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.body-middle::-webkit-scrollbar {
+  display: none;
+}
