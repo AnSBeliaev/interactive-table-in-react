@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import styles from '../TableRow/TableRow.module.css';
+import styles from './TableCell.module.css';
 
 type TableCellColumn = number | { id: string | number };
 
@@ -32,7 +32,8 @@ export const TableCell = memo(
 
     return (
       <div
-        className={`${styles[`table-cell-${columnClassName}`]} ${isSelected ? styles['table-cell-selected-tag'] : ''}`}
+        data-selected={isSelected}
+        className={`${styles[`table-cell-${columnClassName}`]} ${styles['cell']}`}
         onClick={(event) => {
           if (!handleCellClick) return;
           if (!isTag && column.id !== 'allTags' && column.id !== 'allClaims') return;

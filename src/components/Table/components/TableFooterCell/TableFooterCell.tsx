@@ -28,7 +28,8 @@ export const TableFooterCell = memo(
     const currentColumnId = columnId != undefined ? String(columnId) : '';
     return (
       <div
-        className={`${styles['footer-td']} ${styles[`footer-${className}`]} ${isSelected ? styles['footer-cell-selected-tag'] : ''}`}
+        data-selected={isSelected}
+        className={`${styles['footer-td']} ${styles[`footer-${className}`]} ${styles['footer-cell']}`}
         onClick={(event) => onClick?.(event, currentColumnId)}
         onMouseMove={() => onMouseMove?.(`${currentColumnId}-footer`)}
         onMouseDown={(event) => onMouseDown?.(event, `${currentColumnId}-footer`)}
