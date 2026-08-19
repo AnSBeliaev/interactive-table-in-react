@@ -5,3 +5,4 @@ export { TableStatistic } from './TableStatistic';
 export { TableBodyMiddle } from './TableBodyMiddle';
 export { TableBodyRight } from './TableBodyRight';
 export { TableBodyLeft } from './TableBodyLeft';
+export { TableBody } from './TableBody';
