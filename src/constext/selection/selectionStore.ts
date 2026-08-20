@@ -5,11 +5,15 @@ import type { SelectionAction } from '../../components/Table/types';
 export type SelectionState = {
   selectedIds: Set<string>;
   anchorId: string;
+  isDragging: boolean;
+  statsSelectedIds: Set<string>;
 };
 
 let state: SelectionState = {
   selectedIds: new Set<string>(),
   anchorId: '',
+  isDragging: false,
+  statsSelectedIds: new Set<string>(),
 };
 
 const listeners = new Set<() => void>();
@@ -35,6 +39,7 @@ export const selectionStore = {
     state = {
       ...state,
       selectedIds,
+      statsSelectedIds: state.isDragging ? state.statsSelectedIds : selectedIds,
     };
 
     emit();
@@ -52,6 +57,16 @@ export const selectionStore = {
       anchorId,
     };
 
+    emit();
+  },
+
+  setDragging: (isDragging: boolean) => {
+    if (state.isDragging === isDragging) return;
+    state = {
+      ...state,
+      isDragging,
+      statsSelectedIds: isDragging ? state.statsSelectedIds : state.selectedIds,
+    };
     emit();
   },
 };

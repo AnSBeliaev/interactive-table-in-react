@@ -64,6 +64,8 @@ type CreateGetCellBackgroundArgs = {
 };
 
 export const createGetCellBackground = ({ min, max }: CreateGetCellBackgroundArgs) => {
+  const { min: minColor, max: maxColor } = getHeatColors();
+
   const getCellBackground = ({ value }: { value: string }) => {
     const currentValue = Number(value);
     const minValue = Number(min);
@@ -87,7 +89,6 @@ export const createGetCellBackground = ({ min, max }: CreateGetCellBackgroundArg
 
     if (percent == null) return '';
 
-    const { min: minColor, max: maxColor } = getHeatColors();
     const mixed = mixRgb(minColor, maxColor, percent / 100);
     return rgbToCss(mixed);
   };

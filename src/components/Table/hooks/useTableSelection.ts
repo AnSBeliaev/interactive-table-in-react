@@ -39,6 +39,7 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
   const mouseDownShiftRef = useRef(false);
 
   const lastHoverIdRef = useRef('');
+  const pendingSelectToEndRef = useRef(false);
 
   useLayoutEffect(() => {
     isDraggingRef.current = isDragging;
@@ -298,10 +299,20 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
       applyCellClickSelection(mouseDownCellIdRef.current, mouseDownShiftRef.current);
     }
 
+    if (didDragRef.current && dragModeRef.current === 'footer' && pendingSelectToEndRef.current) {
+      const lastOrder = tagColumnIdsRef.current.at(-1);
+      const anchorSep = anchorIdRef.current.lastIndexOf('-');
+      const anchorColumnOrder = Number(anchorIdRef.current.slice(0, anchorSep));
+      if (lastOrder != null) {
+        selectColumns({ anchorColumnOrder, currentColumnOrder: lastOrder });
+      }
+    }
+    pendingSelectToEndRef.current = false;
+    selectionStore.setDragging(false);
     didDragRef.current = false;
     mouseDownCellIdRef.current = '';
     mouseDownShiftRef.current = false;
-  }, [applyCellClickSelection, setIsDragging]);
+  }, [applyCellClickSelection, setIsDragging, selectColumns]);
 
   const handleMouseDown = useCallback(
     (event: React.MouseEvent, currentId?: string) => {
@@ -309,6 +320,7 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
       event.preventDefault();
 
       didDragRef.current = false;
+      pendingSelectToEndRef.current = false;
       mouseDownCellIdRef.current = currentId;
       mouseDownShiftRef.current = event.shiftKey;
       lastHoverIdRef.current = '';
@@ -328,6 +340,7 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
       }
 
       isDraggingRef.current = true;
+      selectionStore.setDragging(true);
       setIsDragging(true);
     },
     [setAnchorId, setIsDragging, rowIds],
@@ -369,16 +382,18 @@ export const useTableSelection = ({ columnIds, rowIds, columns }: UseTableSelect
         const anchorColumnOrder = anchorIdRef.current.slice(0, anchorSep);
 
         if (currentColumnOrder === 'allTags' || currentColumnOrder === 'allClaims') {
-          selectColumns({
-            anchorColumnOrder: Number(anchorColumnOrder),
-            currentColumnOrder: tagColumnIdsRef.current.length - 1,
-          });
-        } else {
-          selectColumns({
-            anchorColumnOrder: Number(anchorColumnOrder),
-            currentColumnOrder: Number(currentColumnOrder),
-          });
+          pendingSelectToEndRef.current = true;
+          return;
         }
+
+        if (!Number.isFinite(Number(currentColumnOrder))) {
+          return;
+        }
+        pendingSelectToEndRef.current = false;
+        selectColumns({
+          anchorColumnOrder: Number(anchorColumnOrder),
+          currentColumnOrder: Number(currentColumnOrder),
+        });
       }
     },
     [selectColumns, dispatch],

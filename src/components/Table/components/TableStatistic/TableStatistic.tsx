@@ -10,7 +10,7 @@ type TableStatisticProps = {
 };
 
 export const TableStatistic = ({ normalizedDocuments, isBigData, documents }: TableStatisticProps) => {
-  const selectedIds = useSelectionSelector((state) => state.selectedIds);
+  const selectedIds = useSelectionSelector((state) => state.statsSelectedIds);
   const { selectedCells, selectedRows, selectedColumns } = useGetStatistic(selectedIds);
 
   const sumOfCells = useGetSumOfCells({ normalizedDocuments, selectedIds, isBigData, documents });
