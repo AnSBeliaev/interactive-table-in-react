@@ -18,3 +18,16 @@
 .body-middle::-webkit-scrollbar {
   display: none;
 }
+
+.sync-body{
+  overflow-x: auto;
+}
+
+.sync-body::-webkit-scrollbar {
+  display: none;
+}
+
+.sync-body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -56,7 +56,7 @@ export const Table = memo(({ data, leftColumns, rightColumns, isBigData }: Table
                 return <TableHead key={headItem.id} item={headItem.title} className={String(headItem.id)} />;
               })}
             </div>
-            <div ref={headerScrollRef} className={styles['header-mid']}>
+            <div ref={headerScrollRef} className={`${styles['header-mid']} ${styles['sync-header']}`}>
               {midData?.map((tag) => (
                 <TableHead
                   key={tag.order}

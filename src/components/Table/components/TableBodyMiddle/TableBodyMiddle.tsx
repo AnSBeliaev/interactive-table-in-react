@@ -27,7 +27,7 @@ export const TableBodyMiddle = ({
   handleMouseDown,
 }: TableBodyMiddleArgs) => {
   return (
-    <div ref={bodyScrollRef} className={styles['body-middle']}>
+    <div ref={bodyScrollRef} className={`${styles['body-middle']} ${styles['sync-body']}`}>
       {tableData?.map((tableRowItem: TableRowItem) => {
         return (
           <TableRow

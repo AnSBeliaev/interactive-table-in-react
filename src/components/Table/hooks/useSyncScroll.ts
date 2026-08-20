@@ -6,41 +6,54 @@ export const useSyncScroll = () => {
   const footerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    const footer = footerRef.current;
     const header = headerRef.current;
     const body = bodyRef.current;
-    const footer = footerRef.current;
 
-    if (!header || !body || !footer) return;
-    const elements = [header, body, footer];
+    if (!footer) return;
+
     let isSyncing = false;
 
-    const listeners = elements.map((source) => {
-      const targets = elements.filter((el) => el !== source);
+    const handleScroll = () => {
+      if (isSyncing) return;
+      isSyncing = true;
 
-      const handleScroll = () => {
-        if (isSyncing) return;
-        isSyncing = true;
+      const scrollLeft = footer.scrollLeft;
 
-        const scrollLeft = source.scrollLeft;
+      if (header && header.scrollLeft !== scrollLeft) {
+        header.scrollLeft = scrollLeft;
+      }
+      if (body && body.scrollLeft !== scrollLeft) {
+        body.scrollLeft = scrollLeft;
+      }
 
-        targets.forEach((target) => {
-          if (target.scrollLeft !== scrollLeft) {
-            target.scrollLeft = scrollLeft;
-          }
-        });
+      isSyncing = false;
+    };
 
-        isSyncing = false;
-      };
+    const handleWheel = (e: WheelEvent) => {
+      if (e.shiftKey || e.deltaX !== 0) {
+        e.preventDefault();
 
-      source.addEventListener('scroll', handleScroll, { passive: true });
+        const delta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+        footer.scrollLeft += delta;
+      }
+    };
 
-      return () => source.removeEventListener('scroll', handleScroll);
-    });
+    footer.addEventListener('scroll', handleScroll, { passive: true });
+
+    if (header) header.addEventListener('wheel', handleWheel, { passive: false });
+    if (body) body.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
-      listeners.forEach((cleanUp) => cleanUp());
+      footer.removeEventListener('scroll', handleScroll);
+      if (header) header.removeEventListener('wheel', handleWheel);
+      if (body) body.removeEventListener('wheel', handleWheel);
     };
   }, []);
 
-  return { headerScrollRef: headerRef, bodyScrollRef: bodyRef, footerScrollRef: footerRef };
+  return {
+    headerScrollRef: headerRef,
+    bodyScrollRef: bodyRef,
+    footerScrollRef: footerRef,
+  };
 };

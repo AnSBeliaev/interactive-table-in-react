@@ -112,7 +112,7 @@ export const TableBody = memo(
           <div className={styles['footer-left']}>
             <TableFooterCell value="All documents" className="documents" />
           </div>
-          <div ref={footerScrollRef} className={styles['footer-mid']}>
+          <div ref={footerScrollRef} className={`${styles['footer-mid']} ${styles['sync-footer']}`}>
             {midData?.map((tag) => {
               return (
                 <TableFooterCell

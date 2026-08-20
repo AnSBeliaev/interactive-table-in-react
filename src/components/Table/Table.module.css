@@ -60,3 +60,15 @@
 .header-mid::-webkit-scrollbar {
   display: none;
 }
+
+.sync-header {
+  overflow-x: auto;
+}
+
+.sync-header::-webkit-scrollbar {
+  display: none;
+}
+.sync-header {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
