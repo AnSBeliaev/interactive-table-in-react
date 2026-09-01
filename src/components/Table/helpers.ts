@@ -115,11 +115,29 @@ export const getCellIdsInRange = ({ anchorId, currentId, rowIds, columnIds, disp
   const r2 = rowIds.indexOf(Number(currentRowId));
   const c1 = columnIds.indexOf(Number(anchorColumnId));
   const c2 = columnIds.indexOf(Number(currentColumnId));
-  for (let r = Math.min(r1, r2); r <= Math.max(r1, r2); r++) {
-    for (let c = Math.min(c1, c2); c <= Math.max(c1, c2); c++) {
+  const rowStart = Math.min(r1, r2);
+  const rowEnd = Math.max(r1, r2);
+  const colStart = Math.min(c1, c2);
+  const colEnd = Math.max(c1, c2);
+
+  for (let r = rowStart; r <= rowEnd; r++) {
+    for (let c = colStart; c <= colEnd; c++) {
       selectedIdsSet.add(`${columnIds[c]}-${rowIds[r]}`);
     }
   }
+
+  const isFullTable =
+    rowIds.length > 0 &&
+    columnIds.length > 0 &&
+    rowStart === 0 &&
+    rowEnd === rowIds.length - 1 &&
+    colStart === 0 &&
+    colEnd === columnIds.length - 1;
+
+  if (isFullTable) {
+    getFullySelectedFooterIds().forEach((id) => selectedIdsSet.add(id));
+  }
+
   dispatch({
     type: 'set',
     ids: selectedIdsSet,
@@ -135,13 +153,47 @@ export const getRowSelectedIds = (rowId: string | number) => [
   `notes-${rowId}`,
 ];
 
+export const addSideIds = (ids: Set<string>, rowIds: number[]) => {
+  for (const rowId of rowIds) {
+    for (const id of getRowSelectedIds(rowId)) {
+      ids.add(id);
+    }
+  }
+  ids.add('allClaims-footer');
+};
+
+export const removeSideIds = (ids: Set<string>, rowIds: number[]) => {
+  for (const rowId of rowIds) {
+    for (const id of getRowSelectedIds(rowId)) {
+      ids.delete(id);
+    }
+  }
+  ids.delete('allClaims-footer');
+};
+
 const getColumnSelectedIds = (columnOrder: string | number) => [`${columnOrder}-footer`];
 
-export const syncSelectedRow = (ids: Set<string>, rowId: string | number | null, tagColumnIds: number[]) => {
-  if (!rowId) return;
-  const rowTagIds = tagColumnIds.map((order) => `${order}-${rowId}`);
+const getFullySelectedFooterIds = () => ['allClaims-footer', 'allTags-footer'];
+
+export const syncFullySelectedFooter = (ids: Set<string>, rowIds: number[], tagColumnIds: number[]) => {
+  const selected = getFullySelectedFooterIds();
+  const allTagsSelected =
+    rowIds.length > 0 &&
+    tagColumnIds.length > 0 &&
+    tagColumnIds.every((columnId) => rowIds.every((rowId) => ids.has(`${columnId}-${rowId}`)));
+
+  if (allTagsSelected) {
+    selected.forEach((id) => ids.add(id));
+  } else {
+    selected.forEach((id) => ids.delete(id));
+  }
+};
+
+export const syncSelectedRow = (ids: Set<string>, rowId: string | number | null, columnIds: number[]) => {
+  if (rowId == null || rowId === '') return;
+  const columnTagIds = columnIds.map((order) => `${order}-${rowId}`);
   const selected = getRowSelectedIds(rowId);
-  const allTagsSelected = rowTagIds.every((id) => ids.has(id));
+  const allTagsSelected = columnTagIds.every((id) => ids.has(id));
 
   if (allTagsSelected) {
     selected.forEach((id) => ids.add(id));
@@ -151,7 +203,7 @@ export const syncSelectedRow = (ids: Set<string>, rowId: string | number | null,
 };
 
 export const syncSelectedColumn = (ids: Set<string>, columnId: string | number | null, rowIds: number[]) => {
-  if (!columnId) return;
+  if (columnId == null || columnId === '') return;
   const rowTagIds = rowIds.map((rowId) => `${columnId}-${rowId}`);
   const selected = getColumnSelectedIds(columnId);
   const allTagsSelected = rowTagIds.every((id) => ids.has(id));
@@ -167,12 +219,14 @@ export const syncSelectedRows = (ids: Set<string>, rowIds: number[], tagColumnId
   for (const rowId of rowIds) {
     syncSelectedRow(ids, rowId, tagColumnIds);
   }
+  syncFullySelectedFooter(ids, rowIds, tagColumnIds);
 };
 
 export const syncSelectedColumns = (ids: Set<string>, rowIds: number[], tagColumnIds: number[]) => {
   for (const columnId of tagColumnIds) {
     syncSelectedColumn(ids, columnId, rowIds);
   }
+  syncFullySelectedFooter(ids, rowIds, tagColumnIds);
 };
 
 export const getNextAnchorId = (

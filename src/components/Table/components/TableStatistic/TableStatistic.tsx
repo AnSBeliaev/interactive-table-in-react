@@ -7,13 +7,31 @@ type TableStatisticProps = {
   normalizedDocuments: NormalizedDocuments;
   isBigData?: boolean;
   documents: TableRowItem[];
+  columnOrders: number[];
 };
 
-export const TableStatistic = ({ normalizedDocuments, isBigData, documents }: TableStatisticProps) => {
-  const selectedIds = useSelectionSelector((state) => state.statsSelectedIds);
-  const { selectedCells, selectedRows, selectedColumns } = useGetStatistic(selectedIds);
+export const TableStatistic = ({
+  normalizedDocuments,
+  isBigData,
+  documents,
+  columnOrders,
+}: TableStatisticProps) => {
+  const selectedIds = useSelectionSelector((state) => state.selectedIds);
+  const isSelectAll = selectedIds.has('allClaims-footer') || selectedIds.has('allTags-footer');
+  const { selectedCells, selectedRows, selectedColumns } = useGetStatistic({
+    selectedIds,
+    isSelectAll,
+    totalRows: documents.length,
+    totalColumns: columnOrders.length,
+  });
 
-  const sumOfCells = useGetSumOfCells({ normalizedDocuments, selectedIds, isBigData, documents });
+  const sumOfCells = useGetSumOfCells({
+    normalizedDocuments,
+    selectedIds,
+    isBigData,
+    documents,
+    columnOrders,
+  });
   return (
     <div className={styles['data-statistic']}>
       <ul>

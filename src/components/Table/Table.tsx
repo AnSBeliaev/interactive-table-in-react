@@ -91,7 +91,12 @@ export const Table = memo(({ data, leftColumns, rightColumns, isBigData }: Table
           />
         </div>
       </div>
-      <TableStatistic normalizedDocuments={normalizedDocuments} isBigData={isBigData} documents={documents} />
+      <TableStatistic
+        normalizedDocuments={normalizedDocuments}
+        isBigData={isBigData}
+        documents={documents}
+        columnOrders={dynamicColumns}
+      />
     </>
   );
 });

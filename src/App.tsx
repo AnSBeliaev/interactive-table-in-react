@@ -1,4 +1,3 @@
-// import mockData from './mock-data/medium_data.json';
 import mockData from './mock-data/big_data.json';
 import { Table } from './components';
 import { STATIC_LEFT_COLUMNS, getStaticRightColumns } from './components/Table/constants/columns';
@@ -12,7 +11,6 @@ function App() {
       <ThemeProvider>
         <ToggleSwitch />
         <Table data={mockData.data} leftColumns={STATIC_LEFT_COLUMNS} rightColumns={rightColumns} isBigData />
-        {/* <Table data={mockData.data} leftColumns={STATIC_LEFT_COLUMNS} rightColumns={rightColumns} /> */}
       </ThemeProvider>
     </>
   );
