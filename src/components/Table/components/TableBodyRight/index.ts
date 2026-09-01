@@ -1,0 +1,1 @@
+export { TableBodyRight } from './TableBodyRight';

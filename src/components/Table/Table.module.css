@@ -10,30 +10,9 @@
     border: 1px solid var(--border);
 }
 
-.table-viewport {
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 500px;
-}
-
-.table-viewport::-webkit-scrollbar {
-    width: 12px;
-}
-
-.footer-mid::-webkit-scrollbar {
-  height: 12px;
-}
-
-.table-viewport::-webkit-scrollbar-thumb,
-.footer-mid::-webkit-scrollbar-thumb {
-  background: var(--head-cell-text);
-  border-radius: 6px;
-}
-
-.table-viewport::-webkit-scrollbar-track,
-.footer-mid::-webkit-scrollbar-track {
-  background: var(--table-tag-bg);;
-  border: 1px solid var(--border);
+.table {
+    display: flex;
+    flex-direction: column;
 }
 
 .table-header {
@@ -47,8 +26,7 @@
     display: flex;
 }
 
-.header-right,
-.footer-right {
+.header-right {
     flex: 0 0 520px;
     height: 60px;
     display: flex;
@@ -68,68 +46,29 @@
     overflow-x: hidden;
 }
 
-.table-body {
-    display: flex;
-    overflow-x: hidden;
-    overflow-y: hidden;
-}
-
-.table-footer {
-    display: flex;
-    overflow-x: hidden;
-    overflow-y: hidden;
-}
-
-.body-left {
-    height: 60px;
-    max-width: 300px;
-    flex: 0 0 300px;
-    display: flex;
-    flex-direction: column;
-}
-
-.body-mid {
-    display: flex;
-    flex-direction: column;
-    overflow-y: hidden;
-}
-
-.body-right {
-    flex: 0 0 520px;
-    height: 60px;
-    display: flex;
-    flex-direction: column;
-}
-
-.footer-left {
-    height: 60px;
-    max-width: 300px;
-    flex: 0 0 300px;
-    display: flex;
-}
-
-.footer-mid {
-    height: 60px;
-    display: flex;
-    overflow-x: auto;
-    overflow-y: hidden;
-}
-
-.header-mid,
-.body-mid,
-.footer-mid {
+.header-mid {
   flex: 1 0 300px;
   min-width: 0;
   overflow-x: auto;
 }
 
-.header-mid,
-.body-mid {
+.header-mid {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-.header-mid::-webkit-scrollbar,
-.body-mid::-webkit-scrollbar {
+.header-mid::-webkit-scrollbar {
   display: none;
+}
+
+.sync-header {
+  overflow-x: auto;
+}
+
+.sync-header::-webkit-scrollbar {
+  display: none;
+}
+.sync-header {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

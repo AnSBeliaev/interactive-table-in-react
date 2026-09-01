@@ -1,3 +1,152 @@
+p {
+    user-select: none;
+}
+
+
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+}
+
+.cell[data-selected="true"] {
+    background-color: var(--selected-cell);
+    color: var(--selected-text-color);
+}
+
+.table-cell-view {
+    height: 60px;
+    background-color: var(--table-tag-bg);
+    flex: 1;
+    color: var(--head-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-right: none;
+}
+
+.table-cell-name {
+    height: 60px;
+    flex: 2;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 1px solid var(--border);
+    border-left: none;
+    background-color: var(--table-tag-bg);
+    color: var(--cell-text);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-cell-name div {
+    width: 90%;
+    text-align: left;
+}
+
+.table-cell-name div p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+}
+
+.table-cell-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 60px;
+    flex: 0 0 60px;
+    width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border: 1px solid var(--border);
+    background-color: var(--table-tag-bg);
+}
+
+.table-cell-selected-tag {
+  background-color: var(--selected-cell);
+}
+
+.table-cell-allTags,
+.table-cell-allClaims {
+    flex: 1;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    background-color: var(--table-tag-bg);
+}
+
+.table-cell-allClaims.table-cell-selected-tag,
+.table-cell-allTags.table-cell-selected-tag,
+.table-cell-groupNameStr.table-cell-selected-tag,
+.table-cell-notes.table-cell-selected-tag,
+.table-cell-tag.table-cell-selected-tag,
+.table-cell-view.table-cell-selected-tag,
+.table-cell-name.table-cell-selected-tag {
+  background-color: var(--selected-cell);
+}
+
+.table-cell-allTags .inner-table-cell,
+.table-cell-allClaims .inner-table-cell {
+   width: 90%;
+}
+
+.table-cell-groupNameStr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 2;
+    height: 60px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background-color: var(--table-tag-bg);
+    color: var(--cell-text);
+}
+
+.table-cell-groupNameStr div {
+    width: 90%;
+    text-align: left;
+}
+
+.table-cell-groupNameStr div p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.table-cell-notes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 2;
+    height: 60px;
+    border: 1px solid var(--border);
+    background-color: var(--table-tag-bg);
+    color: var(--cell-text);
+}
+
+.table-cell-notes div {
+    width: 90%;
+    text-align: left;
+}
+
+.table-cell-notes div p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+}
+
 .inner-table-cell {
     height: 50px;
     width: 50px;
@@ -10,9 +159,5 @@
 }
 
 .inner-table-cell p {
-    user-select: none;
-}
-
-p {
     user-select: none;
 }

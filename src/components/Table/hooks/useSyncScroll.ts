@@ -1,37 +1,59 @@
-import { useRef, type RefObject } from 'react';
+import { useEffect, useRef } from 'react';
 
-type HandleScrollArgs<T> = {
-  sourceRef: React.RefObject<T | null>;
-  firstTargetRef: React.RefObject<T | null>;
-  secondTargetRef: React.RefObject<T | null>;
-};
+export const useSyncScroll = () => {
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const footerRef = useRef<HTMLDivElement | null>(null);
 
-export const useSyncScroll = <T>() => {
-  const headerScrollRef = useRef<T | null>(null);
-  const bodyScrollRef = useRef<T | null>(null);
-  const footerScrollRef = useRef<T | null>(null);
+  useEffect(() => {
+    const footer = footerRef.current;
+    const header = headerRef.current;
+    const body = bodyRef.current;
 
-  const activeSourceRef = useRef<RefObject<HTMLDivElement | null> | null>(null);
-  const handleScroll = ({ sourceRef, firstTargetRef, secondTargetRef }: HandleScrollArgs<HTMLDivElement>) => {
-    if (activeSourceRef.current && activeSourceRef.current !== sourceRef) {
-      return;
-    }
+    if (!footer) return;
 
-    activeSourceRef.current = sourceRef;
+    let isSyncing = false;
 
-    if (firstTargetRef.current && sourceRef.current) {
-      firstTargetRef.current.scrollLeft = sourceRef.current.scrollLeft;
-    }
-    if (secondTargetRef.current && sourceRef.current) {
-      secondTargetRef.current.scrollLeft = sourceRef.current.scrollLeft;
-    }
+    const handleScroll = () => {
+      if (isSyncing) return;
+      isSyncing = true;
 
-    window.requestAnimationFrame(() => {
-      if (activeSourceRef.current === sourceRef) {
-        activeSourceRef.current = null;
+      const scrollLeft = footer.scrollLeft;
+
+      if (header && header.scrollLeft !== scrollLeft) {
+        header.scrollLeft = scrollLeft;
       }
-    });
-  };
+      if (body && body.scrollLeft !== scrollLeft) {
+        body.scrollLeft = scrollLeft;
+      }
 
-  return { handleScroll, headerScrollRef, bodyScrollRef, footerScrollRef };
+      isSyncing = false;
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.shiftKey || e.deltaX !== 0) {
+        e.preventDefault();
+
+        const delta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+        footer.scrollLeft += delta;
+      }
+    };
+
+    footer.addEventListener('scroll', handleScroll, { passive: true });
+
+    if (header) header.addEventListener('wheel', handleWheel, { passive: false });
+    if (body) body.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      footer.removeEventListener('scroll', handleScroll);
+      if (header) header.removeEventListener('wheel', handleWheel);
+      if (body) body.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
+
+  return {
+    headerScrollRef: headerRef,
+    bodyScrollRef: bodyRef,
+    footerScrollRef: footerRef,
+  };
 };

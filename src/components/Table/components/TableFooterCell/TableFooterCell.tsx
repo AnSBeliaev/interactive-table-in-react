@@ -1,11 +1,11 @@
 import { memo } from 'react';
 import styles from './TableFooterCell.module.css';
+import { useSelectionSelector } from '../../../../constext/selection/useSelectionSelector';
 
 type TableFooterProps = {
   value?: string | number | null;
   className: string;
   columnId?: number | string;
-  isSelected?: boolean;
   isTableTag?: boolean;
   getCellBackground?: ({ value }: { value: string }) => string;
   onClick?: ((event: React.MouseEvent<HTMLDivElement, MouseEvent>, cellId: string) => void) | null;
@@ -18,7 +18,6 @@ export const TableFooterCell = memo(
     value,
     className,
     isTableTag,
-    isSelected,
     getCellBackground,
     onClick,
     onMouseMove,
@@ -26,9 +25,12 @@ export const TableFooterCell = memo(
     columnId,
   }: TableFooterProps) => {
     const currentColumnId = columnId != undefined ? String(columnId) : '';
+
+    const isSelected = useSelectionSelector((state) => state.selectedIds.has(`${currentColumnId}-footer`));
     return (
       <div
-        className={`${styles['footer-td']} ${styles[`footer-${className}`]} ${isSelected ? styles['footer-cell-selected-tag'] : ''}`}
+        data-selected={isSelected}
+        className={`${styles['footer-td']} ${styles[`footer-${className}`]} ${styles['footer-cell']}`}
         onClick={(event) => onClick?.(event, currentColumnId)}
         onMouseMove={() => onMouseMove?.(`${currentColumnId}-footer`)}
         onMouseDown={(event) => onMouseDown?.(event, `${currentColumnId}-footer`)}

@@ -1,4 +1,4 @@
-import type { SelectionAction } from './SelectionContext';
+import type { SelectionAction } from '../../components/Table/types';
 
 export const selectionReducer = (selectedIds: Set<string>, action: SelectionAction) => {
   const actionType = action.type;

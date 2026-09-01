@@ -10,14 +10,21 @@
 .head-view {
     flex: 1;
     color: var(--head-cell-text) !important;
+    border-right: none;
 }
 
 .head-name {
     flex: 2;
     color: var(--head-cell-text) !important;
+    border-left: none;
 }
 
 .head-allTags {
+    flex: 1;
+    color: var(--head-cell-text) !important;
+}
+
+.head-allClaims {
     flex: 1;
     color: var(--head-cell-text) !important;
 }

@@ -1,0 +1,1 @@
+export { TableBodyMiddle } from './TableBodyMiddle';

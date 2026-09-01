@@ -1,8 +1,23 @@
 import { useMemo } from 'react';
 import { getRowAndColumnIds } from '../helpers';
 
-export const useGetStatistic = (selectedIds: Set<string>) => {
+type UseGetStatisticArgs = {
+  selectedIds: Set<string>;
+  isSelectAll?: boolean;
+  totalRows?: number;
+  totalColumns?: number;
+};
+
+export const useGetStatistic = ({ selectedIds, isSelectAll, totalRows = 0, totalColumns = 0 }: UseGetStatisticArgs) => {
   const { selectedCells, selectedRows, selectedColumns } = useMemo(() => {
+    if (isSelectAll) {
+      return {
+        selectedCells: { size: totalRows * totalColumns },
+        selectedRows: { size: totalRows },
+        selectedColumns: { size: totalColumns },
+      };
+    }
+
     const selectedCells = new Set<string>();
     const selectedRows = new Set<string>();
     const selectedColumns = new Set<string>();
@@ -30,7 +45,7 @@ export const useGetStatistic = (selectedIds: Set<string>) => {
     });
 
     return { selectedCells, selectedRows, selectedColumns };
-  }, [selectedIds]);
+  }, [selectedIds, isSelectAll, totalRows, totalColumns]);
 
   return { selectedCells, selectedRows, selectedColumns };
 };

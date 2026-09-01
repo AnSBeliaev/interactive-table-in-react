@@ -1,10 +1,10 @@
 import { memo } from 'react';
-import styles from '../TableRow/TableRow.module.css';
+import styles from './TableCell.module.css';
+import { useSelectionSelector } from '../../../../constext/selection/useSelectionSelector';
 
-type TableCellColumn = number | { id: string };
+type TableCellColumn = number | { id: string | number };
 
 type TableCellProps = {
-  isSelected?: boolean;
   cellId?: string;
   column: TableCellColumn;
   value?: unknown;
@@ -20,7 +20,6 @@ export const TableCell = memo(
     value,
     cellId,
     column,
-    isSelected,
     handleMouseDown,
     handleMouseMove,
     getCellBackground,
@@ -30,12 +29,15 @@ export const TableCell = memo(
     const isTag = typeof column === 'number';
     const columnClassName = isTag ? 'tag' : column.id;
 
+    const isSelected = useSelectionSelector((state) => (cellId ? state.selectedIds.has(cellId) : false));
+
     return (
       <div
-        className={`${styles[`table-cell-${columnClassName}`]} ${isSelected ? styles['table-cell-selected-tag'] : ''}`}
+        data-selected={isSelected}
+        className={`${styles[`table-cell-${columnClassName}`]} ${styles['cell']}`}
         onClick={(event) => {
           if (!handleCellClick) return;
-          if (!isTag && column.id !== 'allTags') return;
+          if (!isTag && column.id !== 'allTags' && column.id !== 'allClaims') return;
           if (!cellId) return;
           handleCellClick(event, cellId);
         }}

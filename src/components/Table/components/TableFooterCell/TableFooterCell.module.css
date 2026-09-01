@@ -35,6 +35,11 @@
     background: var(--table-tag-bg);
 }
 
+.footer-allClaims {
+    flex: 1;
+    background: var(--table-tag-bg);
+}
+
 .footer-groupNameStr {
     flex: 2;
     background: linear-gradient(180deg, var(--td-light-bg) 0%, var(--td-dark-bg) 100%);
@@ -60,10 +65,28 @@
     width: 95%;
 }
 
+.footer-allClaims .inner-footer-cell {
+    width: 90%;
+}
+
 .inner-footer-cell p {
     user-select: none;
 }
 
 .footer-cell-selected-tag {
   background-color: var(--selected-cell);
+}
+
+
+.footer-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+}
+
+.footer-cell[data-selected="true"] {
+    background-color: var(--selected-cell);
+    color: var(--selected-text-color);
 }
